@@ -1,0 +1,46 @@
+#!/bin/bash -l
+
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=16384
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --time=00:15:00
+#SBATCH --output=/home/michels/results/taylor/s%x.out
+
+module purge
+module load gcc/8.4.0-cuda python/3.7.7
+source /home/michels/venvs/taylor/bin/activate
+
+shopt -s extglob
+
+echo STARTING AT `date`
+pwd
+
+xpdir="/home/michels/results/taylor/${SLURM_JOB_NAME}"
+
+mkdir -p ${xpdir}
+
+
+cd /home/michels/pedestrian_detection/
+
+mkdir -p ${xpdir}/predictions
+
+srun time python3 -m openpifpaf.eval \
+  --output ${xpdir}/predictions/model_net \
+  --checkpoint=resnet50 \
+  --decoder=cifcaf:0 \
+  --dataset=cocokp \
+  --force-complete-pose \
+  --seed-threshold=0.2 \
+
+echo "Evaluation done!"
+
+
+cd -
+
+echo FINISHED at `date`
+
+deactivate

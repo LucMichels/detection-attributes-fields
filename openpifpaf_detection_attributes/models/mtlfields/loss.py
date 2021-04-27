@@ -82,6 +82,8 @@ class AttributeLoss(torch.nn.Module):
         LOG.debug('loss for %s', self.field_names)
 
         x, t = args
+        if x is None or t is None:
+            return [None]
         loss = self.compute_loss(x, t)
 
         if (loss is not None) and (not torch.isfinite(loss).item()):
