@@ -22,12 +22,10 @@ pwd
 xpdir="/home/michels/results/taylor/${SLURM_JOB_NAME}"
 
 mkdir -p ${xpdir}
-mkdir -p ${xpdir}/code
-#tar -czvf ${xpdir}/code/code.tar.gz ../detection-attributes-fields
 mkdir -p ${xpdir}/logs
 
 # Dataset
-dataset='jaad-cocokp'
+dataset='cocokp-jaad'
 jaadsubset='default'
 trainsplit='train'
 evalsplit='val'
@@ -37,13 +35,13 @@ COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.
 COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
-lr=0.0005
-epochs=5
+lr=0 # 0.0005 #--weight-decay 5e-4 # --ema 0 remove exist # --momentum 0.95
+epochs=251
 
 attributes='detection will_cross'
 duplicates=35
-taskweight=7.0
-lambdas="1.0 1.0 ${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0"
+taskweight=2.0
+lambdas="0.0 0.0 ${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0"
 
 sthreshold=0.2
 minclustersize=10
@@ -52,6 +50,44 @@ clusterthreshold=0.5
 
 cd /home/michels/pedestrian_detection/
 
+
+echo "Start training..."
+mkdir -p ${xpdir}/checkpoints
+
+#
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-upsample=2 \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --lr-warm-up-start-epoch -1 \
+  --weight-decay 5e-4 \
+  --momentum 0.95 \
+  --basenet resnet50 \
+  --detection-bias-prior 0.01 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --attribute-regression-loss l1 \
+  --attribute-focal-gamma 2 \
+  --auto-tune-mtl \
+  --dataset-weights 0.5 1.0 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
+#
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
@@ -73,6 +109,8 @@ do
     --show-final-ground-truth \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation="keep" \
+    --decoder-use-pifpaf-bbox \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
@@ -80,6 +118,13 @@ do
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
+
+
+
+
+
+
+
 
 
 cd -
