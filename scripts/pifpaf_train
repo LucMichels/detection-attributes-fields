@@ -50,7 +50,7 @@ minclustersize=10
 epsilon=5.0
 clusterthreshold=0.5
 
-cd /home/michels/pedestrian_detection/
+cd /home/michels/detection-attributes-fields/
 
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints

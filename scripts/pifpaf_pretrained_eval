@@ -24,7 +24,7 @@ xpdir="/home/michels/results/taylor/${SLURM_JOB_NAME}"
 mkdir -p ${xpdir}
 
 
-cd /home/michels/pedestrian_detection/
+cd /home/michels/detection-attributes-fields/
 
 mkdir -p ${xpdir}/predictions
 
