@@ -72,15 +72,14 @@ srun time python3 -m openpifpaf.train \
   --lr-warm-up-start-epoch -1 \
   --weight-decay 5e-4 \
   --momentum 0.95 \
-  --basenet resnet50 \
+  --checkpoint resnet50 \
   --detection-bias-prior 0.01 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
   --lambdas ${lambdas} \
   --attribute-regression-loss l1 \
   --attribute-focal-gamma 2 \
-  --auto-tune-mtl \
-  --dataset-weights 1.0 0.5 \
+  --dataset-weights 0.5 1.0 \
   2>&1 | tee ${xpdir}/logs/train_log.txt
 echo "Training done!"
 
