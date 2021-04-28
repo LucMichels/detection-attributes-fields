@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:05:00
+#SBATCH --time=02:05:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -73,7 +73,7 @@ srun time python3 -m openpifpaf.train \
   --batch-size 4 \
   --lr ${lr} \
   --lr-warm-up-start-epoch -1 \
-  --weight-decay 5e-4 \
+  --weight-decay 0 \
   --momentum 0.95 \
   --basenet resnet50 \
   --detection-bias-prior 0.01 \
