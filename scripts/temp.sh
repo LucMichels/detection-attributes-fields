@@ -152,3 +152,63 @@ srun time python3 -m openpifpaf.train \
   --auto-tune-mtl \
   2>&1 | tee ${xpdir}/logs/train_log.txt
 echo "Training done!"
+
+# lambdas0
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-upsample=2 \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --lr-warm-up-start-epoch -1 \
+  --weight-decay 0 \
+  --momentum 0.95 \
+  --checkpoint resnet50 \
+  --detection-bias-prior 0.01 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --attribute-regression-loss l1 \
+  --attribute-focal-gamma 2 \
+  --dataset-weights 0.5 1.0 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 4 \
+    --save-all ${xpdir}/images \
+    --show-final-image \
+    --show-final-ground-truth \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --decoder-s-threshold ${sthreshold} \
+    --decoder-optics-min-cluster-size ${minclustersize} \
+    --decoder-optics-epsilon ${epsilon} \
+    --decoder-optics-cluster-threshold ${clusterthreshold} \
+    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+#
