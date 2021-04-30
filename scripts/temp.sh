@@ -198,9 +198,6 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
-    --save-all ${xpdir}/images \
-    --show-final-image \
-    --show-final-ground-truth \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
     --decoder-s-threshold ${sthreshold} \
@@ -211,4 +208,22 @@ do
   echo "Evaluation done!"
 done
 
+    --save-all ${xpdir}/images \
+    --show-final-image \
+    --show-final-ground-truth \
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_coco_${evalepoch} \
+    --checkpoint ${evalfrom} \
+    --decoder=cifcaf:0 \
+    --dataset=cocokp --force-complete-pose --seed-threshold=0.2 \
+    --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+    --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
 #
