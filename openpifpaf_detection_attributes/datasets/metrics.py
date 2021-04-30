@@ -195,6 +195,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                         print("We have an iou")
                         print("iou", iou)
+                        print(1/0)
+
                         
                     else:
                         iou = 0.
@@ -207,7 +209,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         ):
                             max_iou = iou
                             match = gt
-                print(1/0)
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
                     if (
