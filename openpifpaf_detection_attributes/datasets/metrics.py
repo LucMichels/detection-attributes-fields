@@ -216,10 +216,11 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         ):
                             max_iou = iou
                             match = gt
-
+                print(len(ious))
+                print(ious)
+                print(centers)
                 for i in range(len(ious)):
                     print(i, ious[i])
-                    print(i, centers[i])
                 1/0
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
