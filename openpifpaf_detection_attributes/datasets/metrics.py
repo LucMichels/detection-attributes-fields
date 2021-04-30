@@ -177,6 +177,11 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                     ranked_preds.append(rpred)
             ranked_preds.sort(key=lambda x:x.attributes['score'], reverse=True)
 
+
+            ##
+            ious = []
+            centers = []
+            ##
             # Match predictions with closest groud truths
             for pred in ranked_preds:
                 max_iou = -1.
@@ -195,9 +200,13 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                         print("We have an iou")
                         print("iou", iou)
+                        centers.append((pred.attributes['center'], gt.attributes['center']))
                         
                     else:
                         iou = 0.
+                    ##
+                    ious.append(ious)
+                    ##
                     if (iou > 0.5) and (iou >= max_iou):
                         if (
                             (gt.attributes[attribute_meta.attribute] is None)
@@ -207,6 +216,11 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         ):
                             max_iou = iou
                             match = gt
+
+                for i in range(ious):
+                    print(i, ious[i])
+                    print(i, centers[i])
+                1/0
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
                     if (
