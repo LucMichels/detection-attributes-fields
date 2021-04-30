@@ -217,7 +217,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                             max_iou = iou
                             match = gt
 
-                for i in range(ious):
+                for i in range(len(ious)):
                     print(i, ious[i])
                     print(i, centers[i])
                 1/0
