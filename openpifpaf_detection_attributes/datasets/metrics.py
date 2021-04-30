@@ -182,6 +182,11 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 max_iou = -1.
                 match = None
                 for gt in ground_truth:
+                    print("We want a match")
+                    print(type(gt))
+                    print("pred", pred.attributes)
+                    print("gt", gt.attributes)
+                    print(1/0)
                     if (
                         (gt.id in gt_match)
                         and ('width' in pred.attributes)
@@ -205,8 +210,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
-                    print("We had a match")
-                    print(1/0)
                     if (
                         (not match.ignore_eval)
                         and (match.attributes[attribute_meta.attribute] is not None)
