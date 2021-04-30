@@ -150,11 +150,6 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
 
         LOG.info('predictions %d, %.3fs',
                   len(predictions), time.perf_counter()-start)
-        for pred in predictions:
-            print(pred)
-        print("end")
-        print("end")
-        1/0
 
         return predictions
 

@@ -205,6 +205,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
+                    print("We had a match")
+                    print(1/0)
                     if (
                         (not match.ignore_eval)
                         and (match.attributes[attribute_meta.attribute] is not None)
