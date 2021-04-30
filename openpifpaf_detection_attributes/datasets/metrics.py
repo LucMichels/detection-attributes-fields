@@ -182,16 +182,18 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 max_iou = -1.
                 match = None
                 for gt in ground_truth:
-                    print("We want a match")
-                    print(type(gt))
-                    print("pred", pred.attributes)
-                    print("gt", gt.attributes)
-                    print(1/0)
+
                     if (
                         (gt.id in gt_match)
                         and ('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
+                        print("We want an iou")
+                        print(type(gt))
+                        print()
+                        print("pred", pred.attributes)
+                        print("gt", gt.attributes)
+                        print(1/0)
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
