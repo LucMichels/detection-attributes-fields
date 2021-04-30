@@ -195,8 +195,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                         print("We have an iou")
                         print("iou", iou)
-                        print(1/0)
-
                         
                     else:
                         iou = 0.
