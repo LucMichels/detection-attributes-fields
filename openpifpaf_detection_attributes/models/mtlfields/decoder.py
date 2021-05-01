@@ -151,7 +151,7 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
         LOG.info('predictions %d, %.3fs',
                   len(predictions), time.perf_counter()-start)
 
-        return [predictions[-1]]
+        return predictions
 
 
     def cluster_vote(self, field, cluster, meta, conf_field):
