@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=03:05:00
+#SBATCH --time=12:05:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -36,7 +36,7 @@ COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=0.0001
-epochs=251
+epochs=256
 
 attributes='detection will_cross'
 duplicates=35
@@ -74,7 +74,7 @@ srun time python3 -m openpifpaf.train \
   --batch-size 8 \
   --lr ${lr} \
   --lr-warm-up-start-epoch 250 \
-  --weight-decay 0 \
+  --weight-decay 1e-05 \
   --momentum 0.95 \
   --checkpoint resnet50 \
   --detection-bias-prior 0.01 \
