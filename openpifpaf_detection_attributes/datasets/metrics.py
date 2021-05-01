@@ -129,6 +129,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
 
     def accumulate_attribute(self, attribute_meta, predictions, image_meta, *,
                              ground_truth=None):
+        ground_truth = [ann.inverse_transform(image_meta) for ann in ground_truth]
         for cls in range(self.det_stats[attribute_meta.attribute]['n_classes']):
             det_stats = self.det_stats[attribute_meta.attribute][cls]
 
@@ -147,7 +148,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (gt.attributes[attribute_meta.attribute] is not None)
                     ):
                         det_stats['n_gt'] += 1
-
             # Rank predictions based on confidences
             ranked_preds = []
             for pred in predictions:
