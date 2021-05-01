@@ -193,7 +193,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and ('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
-
+                        print("We want an iou")
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
