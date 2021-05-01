@@ -31,7 +31,6 @@ def compute_iou(pred_c, pred_w, pred_h, gt_c, gt_w, gt_h):
         inter_area / (pred_area + gt_area - inter_area)
         if pred_area + gt_area - inter_area != 0 else 0.
     )
-    print(type(iou), type(gt_area), type(pred_area), type(inter_area))
     return iou
 
 
@@ -190,13 +189,14 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and ('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
-                        print("We want an iou")
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
                                           gt.attributes['height'])
-                        print("We have an iou")
-                        print("iou", iou, type(iou))
+                        if iou > 0.0 or type(iou) != type(0.0):
+                            print(iou)
+                            1/0
+
                         
                     else:
                         iou = 0.
