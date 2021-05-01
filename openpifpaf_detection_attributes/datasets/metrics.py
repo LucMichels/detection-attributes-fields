@@ -234,7 +234,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                     det_stats['score'].append(pred.attributes['score'])
                     det_stats['tp'].append(0)
                     det_stats['fp'].append(1)
-                
 
 
     def stats(self):
