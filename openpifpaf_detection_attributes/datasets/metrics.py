@@ -14,6 +14,7 @@ LOG = logging.getLogger(__name__)
 
 
 def compute_iou(pred_c, pred_w, pred_h, gt_c, gt_w, gt_h):
+
     inter_box = [
         max(pred_c[0] - .5*pred_w, gt_c[0] - .5*gt_w),
         max(pred_c[1] - .5*pred_h, gt_c[1] - .5*gt_h),
@@ -30,6 +31,7 @@ def compute_iou(pred_c, pred_w, pred_h, gt_c, gt_w, gt_h):
         inter_area / (pred_area + gt_area - inter_area)
         if pred_area + gt_area - inter_area != 0 else 0.
     )
+    print(type(iou), type(gt_area), type(pred_area), type(inter_area))
     return iou
 
 
