@@ -228,5 +228,37 @@ do
 done
 #
 
-# detection
+# all train
+echo "Start training..."
+mkdir -p ${xpdir}/checkpoints
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --lr-warm-up-start-epoch -1 \
+  --weight-decay 5e-4 \
+  --momentum 0.95 \
+  --basenet fn-resnet50 \
+  --pifpaf-pretraining \
+  --detection-bias-prior 0.01 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --fork-normalization-operation ${mtlgradmerge} \
+  --fork-normalization-duplicates ${duplicates} \
+  --lambdas ${lambdas} \
+  --attribute-regression-loss l1 \
+  --attribute-focal-gamma 2 \
+  --auto-tune-mtl \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
+
 
