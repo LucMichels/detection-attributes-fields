@@ -30,3 +30,5 @@ class BoxPainter(openpifpaf.show.DetectionPainter):
                 subtext = '{:.0%}'.format(ann.attributes['confidence'])
 
         super().annotation(ax, anndet, color=color, text=text, subtext=subtext)
+        print("saved image")
+        1/0

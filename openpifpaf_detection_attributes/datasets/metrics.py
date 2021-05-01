@@ -192,12 +192,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
-                                          gt.attributes['height'])
-                        if iou > 0.0:
-                            print("iou=", iou)
-                            1/0
-
-                        
+                                          gt.attributes['height'])    
                     else:
                         iou = 0.
 
@@ -210,6 +205,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         ):
                             max_iou = iou
                             match = gt
+
+                
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
                     if (
