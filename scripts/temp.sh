@@ -42,7 +42,6 @@ do
     --output ${xpdir}/predictions/model_coco_${evalepoch} \
     --checkpoint ${evalfrom} \
     --decoder=cifcaf:0 \
-    --head-consolidation="keep" \
     --dataset=cocokp --force-complete-pose --seed-threshold=0.2 \
     --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
     --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
