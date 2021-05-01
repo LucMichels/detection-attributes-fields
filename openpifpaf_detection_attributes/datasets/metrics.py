@@ -220,6 +220,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 print(ious)
                 print(centers)
                 for i in range(len(ious)):
+                    print(type(ious[i]))
                     print(i, ious[i])
                 1/0
                 # Classify predictions as True Positives or False Positives
