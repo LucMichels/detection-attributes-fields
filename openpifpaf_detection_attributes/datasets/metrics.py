@@ -15,6 +15,7 @@ LOG = logging.getLogger(__name__)
 
 def compute_iou(pred_c, pred_w, pred_h, gt_c, gt_w, gt_h):
 
+    print(pred_c, gt_c)
     inter_box = [
         max(pred_c[0] - .5*pred_w, gt_c[0] - .5*gt_w),
         max(pred_c[1] - .5*pred_h, gt_c[1] - .5*gt_h),
@@ -206,7 +207,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                             max_iou = iou
                             match = gt
 
-                
+
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
                     if (
