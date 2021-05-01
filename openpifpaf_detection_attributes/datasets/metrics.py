@@ -193,8 +193,10 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
                                           gt.attributes['height'])
-                        if iou > 0.0 or type(iou) != type(0.0):
-                            print(iou)
+                        if type(iou) != type(0.0):
+                            print(type(iou))
+                        if iou > 0.0:
+                            print("iou=", iou)
                             1/0
 
                         
