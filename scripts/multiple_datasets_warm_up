@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:05:00
+#SBATCH --time=03:05:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
