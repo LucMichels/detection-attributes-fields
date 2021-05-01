@@ -196,13 +196,11 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['center'], gt.attributes['width'],
                                           gt.attributes['height'])
                         print("We have an iou")
-                        print("iou", iou)
-                        centers.append((pred.attributes['center'], gt.attributes['center']))
+                        print("iou", iou, type(iou))
                         
                     else:
                         iou = 0.
-                    ##
-                    ##
+
                     if (iou > 0.5) and (iou >= max_iou):
                         if (
                             (gt.attributes[attribute_meta.attribute] is None)
