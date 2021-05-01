@@ -229,24 +229,4 @@ done
 #
 
 # detection
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
-do
-  echo "Start evaluating ${evalfrom}..."
-  evalepoch=${evalfrom: -3}
-  srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_${evalepoch} \
-    --dataset ${dataset} \
-    --jaad-root-dir /work/vita/datasets/JAAD/ \
-    --jaad-subset ${jaadsubset} \
-    --jaad-testing-set ${evalsplit} \
-    --checkpoint ${evalfrom} \
-    --batch-size 4 \
-    --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes ${attributes} \
-    --decoder-s-threshold ${sthreshold} \
-    --decoder-optics-min-cluster-size ${minclustersize} \
-    --decoder-optics-epsilon ${epsilon} \
-    --decoder-optics-cluster-threshold ${clusterthreshold} \
-    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-  echo "Evaluation done!"
-done
+
