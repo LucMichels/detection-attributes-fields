@@ -71,8 +71,6 @@ do
     --jaad-pedestrian-attributes ${attributes} \
     --fork-normalization-operation ${mtlgradmerge} \
     --fork-normalization-duplicates ${duplicates} \
-    --head-consolidation 'filter_and_extend' \
-    --decoder-use-pifpaf-bbox \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
