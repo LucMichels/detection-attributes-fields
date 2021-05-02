@@ -354,9 +354,9 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             print("len(annotations_cifcaf)", len(annotations_cifcaf))
             print("len(predictions)", len(predictions))
             for ann in annotations_cifcaf:
-                print(ann.bbox)
-            for meta in self.attribute_metas:
-                print(meta.attribute)
+                print(ann.bbox())
+            for pred in predictions:
+                print(pred.attributes.center)
 
 
             1/0
