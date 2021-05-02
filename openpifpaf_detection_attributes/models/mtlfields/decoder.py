@@ -352,11 +352,11 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
             print("len(annotations_cifcaf)", len(annotations_cifcaf))
-            print("len(predictions)", len(predictions))
             for ann in annotations_cifcaf:
                 print(ann.bbox())
+            print("len(predictions)", len(predictions))
             for pred in predictions:
-                print(pred.attributes.center)
+                print(pred.attributes["center"])
 
 
             1/0
