@@ -12,7 +12,7 @@ from ...datasets import annotation
 from ...datasets import attribute
 from ...datasets import headmeta
 
-import cifcaf_threadless
+from . import cifcaf_threadless
 
 
 LOG = logging.getLogger(__name__)
@@ -169,7 +169,7 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
             print(type(annotations_cifcaf))
             if len(predictions) > 0:
                 print(type(predictions[-1]))
-                
+
             1/0
         return predictions
 
