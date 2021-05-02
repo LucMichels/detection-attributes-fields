@@ -353,7 +353,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             annotations_cifcaf = cifcaf_dec(fields)
             print("len(annotations_cifcaf)", len(annotations_cifcaf))
             for ann in annotations_cifcaf:
-                print(ann.bbox(), get_center_width_height_from(ann.bbox()))
+                print(ann.bbox(), self.get_center_width_height_from(ann.bbox()))
             print("len(predictions)", len(predictions))
             for pred in predictions:
                 print(pred.attributes["center"], pred.attributes["width"], pred.attributes["height"])
@@ -400,7 +400,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         return pred
 
-    def get_center_width_height_from(bbox):
+    def get_center_width_height_from(self, bbox):
         w = bbox[2]
         h = bbox[3]
         x = bbox[0] 
