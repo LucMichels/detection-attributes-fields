@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:01:00
+#SBATCH --time=02:01:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -36,7 +36,7 @@ COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=0.0001
-epochs=254
+epochs=251
 
 attributes='will_cross'
 duplicates=5
@@ -91,6 +91,22 @@ echo "Training done!"
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_coco_${evalepoch} \
+    --checkpoint ${evalfrom} \
+    --decoder=cifcaf:0 \
+    --dataset=cocokp --force-complete-pose --seed-threshold=0.2 \
+    --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+    --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
 
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 do
