@@ -281,7 +281,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                                 and (meta.object_type is object_type)
                              )]
                 if len(meta_list) > 0:
-                    decoders.append(InstanceDecoder(dataset=dataset,
+                    decoders.append(InstanceCIFCAFDecoder(dataset=dataset,
                                                     object_type=object_type,
                                                     attribute_metas=meta_list,
                                                     full_head_metas=head_metas))
