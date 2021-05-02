@@ -116,6 +116,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         # Store predictions for writing to file
         pred_data = []
         for pred in predictions:
+            print("accumulate", type(pred))
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
 
