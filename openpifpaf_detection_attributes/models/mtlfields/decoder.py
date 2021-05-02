@@ -12,6 +12,8 @@ from ...datasets import annotation
 from ...datasets import attribute
 from ...datasets import headmeta
 
+import cifcaf_threadless
+
 
 LOG = logging.getLogger(__name__)
 
@@ -68,6 +70,9 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
         group.add_argument('--decoder-optics-cluster-threshold',
                            default=cls.optics_cluster_threshold, type=float,
                            help='threshold to separate clusters in OPTICS')
+        group.add_argument('--decoder-use-pifpaf-bbox',
+                   default=False, action='store_true',
+                   help='use pifpaf head bboxes from keypoints instead of default detection heads')
 
 
     @classmethod
@@ -77,6 +82,9 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
         cls.optics_min_cluster_size = args.decoder_optics_min_cluster_size
         cls.optics_epsilon = args.decoder_optics_epsilon
         cls.optics_cluster_threshold = args.decoder_optics_cluster_threshold
+
+        # pifpaf detection
+        cls.decoder_use_pifpaf_bbox = args.decoder_use_pifpaf_bbox
 
 
     @classmethod
@@ -151,6 +159,18 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
         LOG.info('predictions %d, %.3fs',
                   len(predictions), time.perf_counter()-start)
 
+        if self.decoder_use_pifpaf_bbox:
+            assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
+            cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
+            caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
+            assert len(cif_head) == len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
+            cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
+            annotations_cifcaf = cifcaf_dec(fields)
+            print(type(annotations_cifcaf))
+            if len(predictions) > 0:
+                print(type(predictions[-1]))
+                
+            1/0
         return predictions
 
 
