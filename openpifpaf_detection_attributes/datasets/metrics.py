@@ -9,6 +9,8 @@ import openpifpaf
 
 from .headmeta import AttributeMeta
 
+from .jaad.annotation import JaadPedestrianAnnotation
+
 
 LOG = logging.getLogger(__name__)
 
