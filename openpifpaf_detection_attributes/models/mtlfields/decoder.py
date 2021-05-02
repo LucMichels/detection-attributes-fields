@@ -340,6 +340,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                     attributes[meta.attribute] = att
 
                 pred = self.annotation(**attributes)
+                print(attributes)
                 predictions.append(pred)
 
             LOG.info('predictions %d, %.3fs',
@@ -364,6 +365,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["center"] = c
                 attributes["width"]  = w
                 attributes["height"] = h
+                attributes["confidence"] = 1
 
                 for meta in self.attribute_metas:
                     att = self.bbox_vote(fields[meta.head_index], bbox, meta)
@@ -405,10 +407,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         if meta.is_spatial:
             pred *= meta.stride
-
-        print(pred.shape)
-        print(pred)
-        print("stride", meta.stride)
         if meta.n_channels == 1:
             if meta.is_classification:
                 pred = 1. / (1. + np.exp(-pred))
