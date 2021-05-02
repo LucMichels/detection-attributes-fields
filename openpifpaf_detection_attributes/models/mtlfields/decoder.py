@@ -340,7 +340,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                     attributes[meta.attribute] = att
 
                 pred = self.annotation(**attributes)
-                print(attributes)
                 predictions.append(pred)
 
             LOG.info('predictions %d, %.3fs',

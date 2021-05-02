@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:01:00
+#SBATCH --time=13:01:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -73,7 +73,6 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
-    --save-all ${xpdir}/images \
     --jaad-pedestrian-attributes ${attributes} \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
