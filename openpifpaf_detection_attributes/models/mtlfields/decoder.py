@@ -372,7 +372,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
                 pred = self.annotation(**attributes)
                 predictions.append(pred)
-                print("type(pred)", type(pred))
 
         return predictions
 
