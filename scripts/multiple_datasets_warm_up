@@ -83,6 +83,7 @@ do
     --decoder-optics-epsilon ${epsilon} \
     --decoder-optics-cluster-threshold ${clusterthreshold} \
     --decoder-use-pifpaf-bbox \
+    --head-consolidation=keep \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
