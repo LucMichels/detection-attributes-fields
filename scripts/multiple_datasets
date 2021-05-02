@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=06:01:00
+#SBATCH --time=00:01:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -61,7 +61,7 @@ mkdir -p ${xpdir}/checkpoints
 mkdir -p ${xpdir}/predictions
 
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([2-9]))
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}

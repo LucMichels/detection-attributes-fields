@@ -293,70 +293,86 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
     def __call__(self, fields, initial_annotations=None):
         start = time.perf_counter()
 
-        # Field S
-        s_meta = [meta for meta in self.attribute_metas
-                  if meta.attribute == 'confidence']
-        assert len(s_meta) == 1
-        s_meta = s_meta[0]
-        s_field = fields[s_meta.head_index].copy()
-        conf_field = 1. / (1. + np.exp(-s_field))
-        s_mask = conf_field > self.s_threshold
-
-        # Field V
-        v_meta = [meta for meta in self.attribute_metas
-                  if meta.attribute == 'center']
-        assert len(v_meta) == 1
-        v_meta = v_meta[0]
-        v_field = fields[v_meta.head_index].copy()
-        if v_meta.std is not None:
-            v_field[0] *= v_meta.std[0]
-            v_field[1] *= v_meta.std[1]
-        if v_meta.mean is not None:
-            v_field[0] += v_meta.mean[0]
-            v_field[1] += v_meta.mean[1]
-
-        # OPTICS clustering
-        point_list = []
-        for y in range(s_mask.shape[1]):
-            for x in range(s_mask.shape[2]):
-                if s_mask[0,y,x]:
-                    point = optics.Point(x, y, v_field[0,y,x], v_field[1,y,x])
-                    point_list.append(point)
-
-        clustering = optics.Optics(point_list,
-                                   self.optics_min_cluster_size,
-                                   self.optics_epsilon)
-        clustering.run()
-        clusters = clustering.cluster(self.optics_cluster_threshold)
-
-        # Predictions for all instances
-        predictions = []
-        for cluster in clusters:
-            attributes = {}
-            for meta in self.attribute_metas:
-                att = self.cluster_vote(fields[meta.head_index], cluster,
-                                        meta, conf_field)
-                attributes[meta.attribute] = att
-
-            pred = self.annotation(**attributes)
-            predictions.append(pred)
-
-        LOG.info('predictions %d, %.3fs',
-                  len(predictions), time.perf_counter()-start)
-
         if self.decoder_use_pifpaf_bbox:
+            # Field S
+            s_meta = [meta for meta in self.attribute_metas
+                      if meta.attribute == 'confidence']
+            assert len(s_meta) == 1
+            s_meta = s_meta[0]
+            s_field = fields[s_meta.head_index].copy()
+            conf_field = 1. / (1. + np.exp(-s_field))
+            s_mask = conf_field > self.s_threshold
+
+            # Field V
+            v_meta = [meta for meta in self.attribute_metas
+                      if meta.attribute == 'center']
+            assert len(v_meta) == 1
+            v_meta = v_meta[0]
+            v_field = fields[v_meta.head_index].copy()
+            if v_meta.std is not None:
+                v_field[0] *= v_meta.std[0]
+                v_field[1] *= v_meta.std[1]
+            if v_meta.mean is not None:
+                v_field[0] += v_meta.mean[0]
+                v_field[1] += v_meta.mean[1]
+
+            # OPTICS clustering
+            point_list = []
+            for y in range(s_mask.shape[1]):
+                for x in range(s_mask.shape[2]):
+                    if s_mask[0,y,x]:
+                        point = optics.Point(x, y, v_field[0,y,x], v_field[1,y,x])
+                        point_list.append(point)
+
+            clustering = optics.Optics(point_list,
+                                       self.optics_min_cluster_size,
+                                       self.optics_epsilon)
+            clustering.run()
+            clusters = clustering.cluster(self.optics_cluster_threshold)
+
+            # Predictions for all instances
+            predictions = []
+            for cluster in clusters:
+                attributes = {}
+                for meta in self.attribute_metas:
+                    att = self.cluster_vote(fields[meta.head_index], cluster,
+                                            meta, conf_field)
+                    attributes[meta.attribute] = att
+
+                pred = self.annotation(**attributes)
+                predictions.append(pred)
+
+            LOG.info('predictions %d, %.3fs',
+                      len(predictions), time.perf_counter()-start)
+
+        else:
+            
             assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
             cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
             caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
             assert len(cif_head) == len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
-            print("len(annotations_cifcaf)", len(annotations_cifcaf))
+
+            predictions = []
             for ann in annotations_cifcaf:
-                print(ann.bbox(), self.get_center_width_height_from(ann.bbox()))
-            print("len(predictions)", len(predictions))
-            for pred in predictions:
-                print(pred.attributes["center"], pred.attributes["width"], pred.attributes["height"])
+                bbox = ann.bbox()
+
+                attributes = {}
+
+                c, w, h = self.get_center_width_height_from(bbox)
+                attributes["center"] = c
+                attributes["width"]  = w
+                attributes["height"] = h
+
+                for meta in self.attribute_metas:
+                    att = self.bbox_vote(fields[meta.head_index], bbox, meta)
+                    attributes[meta.attribute] = att
+
+                pred = self.annotation(**attributes)
+                predictions.append(pred)
+
+
 
 
             1/0
@@ -388,10 +404,11 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         pred = pred / norm if norm != 0. else 0.
 
         if meta.is_spatial:
-            print(pred.shape)
-            print(pred)
-            print("stride", meta.stride)
             pred *= meta.stride
+
+        print(pred.shape)
+        print(pred)
+        print("stride", meta.stride)
         if meta.n_channels == 1:
             if meta.is_classification:
                 pred = 1. / (1. + np.exp(-pred))
@@ -406,12 +423,25 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
     def bbox_vote(self, field, bbox, meta, conf_field):
         field = field.copy()
 
-        if meta.std is not None:
-            field *= (meta.std if meta.n_channels == 1
-                      else np.expand_dims(meta.std, (1,2)))
-        if meta.mean is not None:
-            field += (meta.mean if meta.n_channels == 1
-                      else np.expand_dims(meta.mean, (1,2)))
+        assert meta.is_classification # rest is not implemented
+        # rescale bbox so its fit fields (divide by stride = 8 hardcoded for now)
+        bbox = bbox/8 
+        bbox = np.round(bbox).astype(np.int)
+        w = bbox[2]
+        h = bbox[3]
+        x = bbox[0] 
+        y = bbox[1]
+
+        pred = 0.0
+        for x_i in range(x, x + w):
+            for y_k in range(y, y + h):
+                pred += field[:, y_k, x_i]
+        pred = pred / (w*h)
+        pred = 1. / (1. + np.exp(-pred))
+
+        return [pred]
+
+
 
     def get_center_width_height_from(self, bbox):
         w = bbox[2]
