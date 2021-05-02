@@ -388,6 +388,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         pred = pred / norm if norm != 0. else 0.
 
         if meta.is_spatial:
+            print("stride", meta.stride)
             pred *= meta.stride
         if meta.n_channels == 1:
             if meta.is_classification:
@@ -399,6 +400,16 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             pred = pred.tolist()
 
         return pred
+
+    def bbox_vote(self, field, bbox, meta, conf_field):
+        field = field.copy()
+
+        if meta.std is not None:
+            field *= (meta.std if meta.n_channels == 1
+                      else np.expand_dims(meta.std, (1,2)))
+        if meta.mean is not None:
+            field += (meta.mean if meta.n_channels == 1
+                      else np.expand_dims(meta.mean, (1,2)))
 
     def get_center_width_height_from(self, bbox):
         w = bbox[2]
