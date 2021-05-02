@@ -351,9 +351,12 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             assert len(cif_head) == len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
-            print(type(annotations_cifcaf))
-            if len(predictions) > 0:
-                print(type(predictions[-1]))
+            print("len(annotations_cifcaf)", len(annotations_cifcaf))
+            print("len(predictions)", len(predictions))
+            for ann in annotations_cifcaf:
+                print(ann)
+            for pred in predictions:
+                print(pred)
 
             1/0
         return predictions

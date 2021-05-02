@@ -72,7 +72,7 @@ do
     --jaad-subset ${jaadsubset} \
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
-    --batch-size 4 \
+    --batch-size 1 \
     --save-all ${xpdir}/images \
     --show-final-image \
     --show-final-ground-truth \
