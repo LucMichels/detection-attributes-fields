@@ -116,7 +116,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         # Store predictions for writing to file
         pred_data = []
         for pred in predictions:
-            if not isinstance(pred, openpifpaf.annotation.Annotation):
+            if isinstance(pred, JaadPedestrianAnnotation):
+                print("got in")
                 pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
 
