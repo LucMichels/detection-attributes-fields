@@ -56,7 +56,7 @@ mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([2-9]))
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -81,7 +81,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([2-9]))
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
