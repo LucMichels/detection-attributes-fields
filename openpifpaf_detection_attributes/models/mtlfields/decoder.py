@@ -388,6 +388,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         pred = pred / norm if norm != 0. else 0.
 
         if meta.is_spatial:
+            print(fields.shape)
             print("stride", meta.stride)
             pred *= meta.stride
         if meta.n_channels == 1:
