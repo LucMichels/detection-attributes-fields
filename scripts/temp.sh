@@ -325,4 +325,36 @@ srun time python3 -m openpifpaf.train \
   2>&1 | tee ${xpdir}/logs/train_log.txt
 echo "Training done!"
 
+#multiple datasets
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-upsample=2 \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --lr-warm-up-start-epoch -1 \
+  --weight-decay 5e-4 \
+  --momentum 0.95 \
+  --checkpoint resnet50 \
+  --detection-bias-prior 0.01 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --attribute-regression-loss l1 \
+  --attribute-focal-gamma 2 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
+
 
