@@ -373,10 +373,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 pred = self.annotation(**attributes)
                 predictions.append(pred)
 
-
-
-
-            1/0
         return predictions
 
     def cluster_vote(self, field, cluster, meta, conf_field):
