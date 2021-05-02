@@ -422,7 +422,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         assert meta.is_classification # rest is not implemented
         # rescale bbox so its fit fields (divide by stride = 8 hardcoded for now)
-        bbox = bbox/8 
+        bbox = [val/8 for val in bbox] 
         bbox = np.round(bbox).astype(np.int)
         w = bbox[2]
         h = bbox[3]
