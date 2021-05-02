@@ -417,7 +417,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         return pred
 
-    def bbox_vote(self, field, bbox, meta, conf_field):
+    def bbox_vote(self, field, bbox, meta):
         field = field.copy()
 
         assert meta.is_classification # rest is not implemented
