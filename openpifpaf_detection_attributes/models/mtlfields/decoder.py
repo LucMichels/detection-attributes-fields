@@ -228,7 +228,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         super().__init__()
         self.dataset = dataset
         self.object_type = object_type
-        self.prediction = prediction.OBJECT_PREDICTIONS[self.dataset][self.object_type]
+        self.annotation = annotation.OBJECT_ANNOTATIONS[self.dataset][self.object_type]
         for meta in attribute_metas:
             assert meta.dataset == self.dataset
             assert meta.object_type is self.object_type
