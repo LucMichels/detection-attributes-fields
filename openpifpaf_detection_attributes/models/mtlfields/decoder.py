@@ -432,7 +432,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         pred = pred / (w*h)
         pred = 1. / (1. + np.exp(-pred))
 
-        return [pred]
+        return pred
 
 
 
