@@ -357,3 +357,41 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
             1/0
         return predictions
+
+    def cluster_vote(self, field, cluster, meta, conf_field):
+        field = field.copy()
+
+        if meta.std is not None:
+            field *= (meta.std if meta.n_channels == 1
+                      else np.expand_dims(meta.std, (1,2)))
+        if meta.mean is not None:
+            field += (meta.mean if meta.n_channels == 1
+                      else np.expand_dims(meta.mean, (1,2)))
+
+        pred = np.array([0.]*field.shape[0])
+        norm = 0.
+        for pt in cluster.points:
+            if meta.is_scalar: # scalar field
+                val = field[:, pt.y, pt.x]
+            else: # vectorial field
+                val = np.array([pt.x, pt.y]) + field[:, pt.y, pt.x]
+            conf = (
+                conf_field[0, pt.y, pt.x] if meta.attribute != 'confidence'
+                else 1.
+            )
+            pred += val * conf
+            norm += conf
+        pred = pred / norm if norm != 0. else 0.
+
+        if meta.is_spatial:
+            pred *= meta.stride
+        if meta.n_channels == 1:
+            if meta.is_classification:
+                pred = 1. / (1. + np.exp(-pred))
+            pred = pred[0]
+        else:
+            if meta.is_classification:
+                pred = softmax(pred)
+            pred = pred.tolist()
+
+        return pred
