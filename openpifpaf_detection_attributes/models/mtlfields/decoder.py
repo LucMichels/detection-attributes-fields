@@ -293,7 +293,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
     def __call__(self, fields, initial_annotations=None):
         start = time.perf_counter()
 
-        if self.decoder_use_pifpaf_bbox:
+        if not self.decoder_use_pifpaf_bbox:
             # Field S
             s_meta = [meta for meta in self.attribute_metas
                       if meta.attribute == 'confidence']
@@ -346,7 +346,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                       len(predictions), time.perf_counter()-start)
 
         else:
-            
+
             assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
             cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
             caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
