@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:01:00
+#SBATCH --time=01:01:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -79,9 +79,6 @@ do
     --decoder-optics-cluster-threshold ${clusterthreshold} \
     --decoder-use-pifpaf-bbox \
     --head-consolidation=keep \
-    --save-all ${xpdir}/images \
-    --show-final-image \
-    --show-final-ground-truth \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
