@@ -350,7 +350,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
             cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
             caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
-            assert len(cif_head) == len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
+            assert len(cif_head) == len(caf_head) and len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
 
@@ -441,5 +441,5 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         h = bbox[3]
         x = bbox[0] 
         y = bbox[1]
-        c = [x + 0.5*h, y + 0.5*w]
+        c = [x + 0.5*w, y + 0.5*h]
         return c, w, h
