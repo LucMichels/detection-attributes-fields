@@ -79,6 +79,9 @@ do
     --decoder-optics-cluster-threshold ${clusterthreshold} \
     --decoder-use-pifpaf-bbox \
     --head-consolidation=keep \
+    --save-all ${xpdir}/images \
+    --show-final-image \
+    --show-final-ground-truth \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
