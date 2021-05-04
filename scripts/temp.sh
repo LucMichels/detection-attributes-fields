@@ -403,6 +403,10 @@ srun time python3 -m openpifpaf.train \
 echo "Training done!"
 
 #pifpaf detect
+
+mkdir -p ${xpdir}/predictions
+mkdir -p ${xpdir}/images
+
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
 srun time python3 -m openpifpaf.train \
@@ -420,6 +424,7 @@ srun time python3 -m openpifpaf.train \
   --cocokp-upsample=2 \
   --coco-eval-orientation-invariant 0.0 \
   --ema 0.01 \
+  --auto-tune-mtl \
   --log-interval 10 \
   --val-interval 1 \
   --val-batches 1 \

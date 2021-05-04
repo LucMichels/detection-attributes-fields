@@ -130,7 +130,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
 
     def accumulate_attribute(self, attribute_meta, predictions, image_meta, *,
                              ground_truth=None):
-        ground_truth = [ann.inverse_transform(image_meta) for ann in ground_truth]
         for cls in range(self.det_stats[attribute_meta.attribute]['n_classes']):
             det_stats = self.det_stats[attribute_meta.attribute][cls]
 
