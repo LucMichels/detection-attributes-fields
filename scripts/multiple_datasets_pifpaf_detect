@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=01:01:00
+#SBATCH --time=12:01:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -48,12 +48,6 @@ epsilon=5.0
 clusterthreshold=0.5
 
 cd /home/michels/detection-attributes-fields/
-
-
-
-
-
-
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
