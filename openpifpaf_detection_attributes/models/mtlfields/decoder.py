@@ -291,11 +291,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
 
     def __call__(self, fields, initial_annotations=None):
-        print("Fields size")
-        for f in fields:
-            print(f.shape)
-        start = time.perf_counter()
-        print("Printed fields size")
+
 
         if not self.decoder_use_pifpaf_bbox:
             # Field S
@@ -369,6 +365,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["width"]  = w
                 attributes["height"] = h
                 attributes["confidence"] = 1
+                print(bbox, "are sizes fine?")
 
                 for meta in self.attribute_metas:
                     att = self.bbox_vote(fields[meta.head_index], bbox, meta)
