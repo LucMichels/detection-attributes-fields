@@ -27,7 +27,7 @@ class CifCaf():
     force_complete = False
     force_complete_caf_th = 0.001
     greedy = False
-    keypoint_threshold = 0.15
+    keypoint_threshold = 0.10
     keypoint_threshold_rel = 0.5
     nms = utils.nms.Keypoints()
     nms_before_force_complete = False
