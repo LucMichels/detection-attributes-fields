@@ -117,6 +117,14 @@ class CifCaf():
     def configure(cls, args: argparse.Namespace):
         """Take the parsed argument parser output and configure class variables."""
         # force complete
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
+        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
         keypoint_threshold_nms = args.keypoint_threshold
         if args.force_complete_pose:
             if not args.ablation_independent_kp:
