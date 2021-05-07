@@ -291,7 +291,11 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
 
     def __call__(self, fields, initial_annotations=None):
+        print("Fields size")
+        for f in fields:
+            print(f.shape)
         start = time.perf_counter()
+        print("Printed fields size")
 
         if not self.decoder_use_pifpaf_bbox:
             # Field S

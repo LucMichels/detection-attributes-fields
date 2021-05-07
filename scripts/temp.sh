@@ -406,7 +406,6 @@ echo "Training done!"
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
-
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
 srun time python3 -m openpifpaf.train \
