@@ -75,6 +75,9 @@ do
     --decoder-use-pifpaf-bbox \
     --head-consolidation=keep \
     --force-complete-pose --seed-threshold=0.2 \
+    --save-all ${xpdir}/images \
+    --show-final-image \
+    --show-final-ground-truth \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
