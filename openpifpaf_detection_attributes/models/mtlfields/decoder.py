@@ -365,14 +365,15 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["width"]  = w
                 attributes["height"] = h
                 attributes["confidence"] = 1
-                print([val/8 for val in bbox], "are sizes fine?")
 
-                for meta in self.attribute_metas:
-                    att = self.bbox_vote(fields[meta.head_index], bbox, meta)
-                    attributes[meta.attribute] = att
+                # for now we remove detections that are too small but we might try with setting these to 1
+                if width/8 >= 1.0 or height/8 >= 1.0
+                    for meta in self.attribute_metas:
+                        att = self.bbox_vote(fields[meta.head_index], bbox, meta)
+                        attributes[meta.attribute] = att
 
-                pred = self.annotation(**attributes)
-                predictions.append(pred)
+                    pred = self.annotation(**attributes)
+                    predictions.append(pred)
 
         return predictions
 
@@ -418,7 +419,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         field = field.copy()
 
         assert meta.is_classification # rest is not implemented
-        # rescale bbox so its fit fields (divide by stride = 8 hardcoded for now)
+        # rescale bbox so its fit fields
         bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
         bbox = np.round(bbox).astype(np.int)
         w = bbox[2]
@@ -426,12 +427,18 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         x = bbox[0] 
         y = bbox[1]
 
-        pred = 0.0
-        for y_k in range(y, np.clip(y + h, 0, field.shape[1])):
-            for x_i in range(x, np.clip(x + w, 0, field.shape[2])):
-                pred += field[:, y_k, x_i]
+        # generate the distribution centered at this box
+        x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
+        
+        # activity map for current person
+        y, x = np.arange(field.shape[1]), np.arange(field.shape[2])    
+        gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
+        gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
+        g  = np.outer(gy, gx)
+        print(g.shape, field.squeeze(0).shape)
 
-        pred = pred / w*h if w*h > 0 else 0
+        pred = np.sum(g*field.squeeze(0))
+
         pred = 1. / (1. + np.exp(-pred))
 
         return pred
