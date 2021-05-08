@@ -1,0 +1,116 @@
+#!/bin/bash -l
+
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=16384
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --time=02:30:30
+#SBATCH --output=/home/michels/results/taylor/s%x.out
+
+module purge
+module load gcc/8.4.0-cuda python/3.7.7
+source /home/michels/venvs/taylor/bin/activate
+
+shopt -s extglob
+
+echo STARTING AT `date`
+pwd
+
+xpdir="/home/michels/results/taylor/${SLURM_JOB_NAME}"
+
+mkdir -p ${xpdir}
+mkdir -p ${xpdir}/logs
+
+# Dataset
+dataset='jaad-cocokp'
+jaadsubset='default'
+trainsplit='train'
+evalsplit='val'
+# COCO
+COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
+COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.json'
+COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
+COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
+# Training
+lr=0.0005
+epochs=251
+
+attributes='detection'
+duplicates=5
+lambdas="1.0 1.0 1.0"
+
+sthreshold=0.2
+minclustersize=10
+epsilon=5.0
+clusterthreshold=0.5
+
+cd /home/michels/detection-attributes-fields/
+
+mkdir -p ${xpdir}/predictions
+mkdir -p ${xpdir}/images
+
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-upsample=2 \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --lr-warm-up-start-epoch 250 \
+  --weight-decay 5e-4 \
+  --momentum 0.95 \
+  --checkpoint resnet50 \
+  --detection-bias-prior 0.01 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --attribute-regression-loss l1 \
+  --attribute-focal-gamma 2 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 1 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --decoder-s-threshold ${sthreshold} \
+    --decoder-optics-min-cluster-size ${minclustersize} \
+    --decoder-optics-epsilon ${epsilon} \
+    --decoder-optics-cluster-threshold ${clusterthreshold} \
+    --decoder-use-pifpaf-bbox \
+    --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
+    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+
+
+cd -
+
+echo FINISHED at `date`
+
+deactivate
