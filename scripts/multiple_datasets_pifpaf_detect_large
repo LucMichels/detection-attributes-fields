@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=02:31:00
+#SBATCH --time=10:31:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -36,7 +36,7 @@ COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=0.0001
-epochs=252
+epochs=254
 
 attributes='will_cross'
 duplicates=5
