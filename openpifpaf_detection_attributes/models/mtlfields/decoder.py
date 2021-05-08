@@ -354,6 +354,11 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
 
+            for head in self.full_head_metas:
+                print(head)
+
+            1/0
+
             predictions = []
             for ann in annotations_cifcaf:
                 bbox = ann.bbox()
