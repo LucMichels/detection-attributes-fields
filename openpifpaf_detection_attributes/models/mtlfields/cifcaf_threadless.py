@@ -24,7 +24,7 @@ class CifCaf():
     """
     connection_method = 'blend'
     occupancy_visualizer = visualizer.Occupancy()
-    force_complete = False
+    force_complete = True
     force_complete_caf_th = 0.001
     greedy = False
     keypoint_threshold = 0.15
@@ -72,15 +72,6 @@ class CifCaf():
     @classmethod
     def cli(cls, parser: argparse.ArgumentParser):
         """Command line interface (CLI) to extend argument parser."""
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        1/0
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
-        print("YES I DO THIS THING WHERE I PARSE STUFF")
         group = parser.add_argument_group('CifCaf decoder')
         assert not cls.force_complete
         group.add_argument('--force-complete-pose',
@@ -126,15 +117,6 @@ class CifCaf():
     def configure(cls, args: argparse.Namespace):
         """Take the parsed argument parser output and configure class variables."""
         # force complete
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        1/0
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
-        print("YES I DO THIS THING WHERE I CONFUGURE STUFF")
         keypoint_threshold_nms = args.keypoint_threshold
         if args.force_complete_pose:
             if not args.ablation_independent_kp:
