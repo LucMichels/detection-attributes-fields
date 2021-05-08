@@ -354,11 +354,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             annotations_cifcaf = cifcaf_dec(fields)
 
-            for head in self.full_head_metas:
-                print(head)
-
-            1/0
-
             predictions = []
             for ann in annotations_cifcaf:
                 bbox = ann.bbox()
@@ -370,7 +365,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["width"]  = w
                 attributes["height"] = h
                 attributes["confidence"] = 1
-                print(bbox, "are sizes fine?")
+                print([val/8 for val in bbox], "are sizes fine?")
 
                 for meta in self.attribute_metas:
                     att = self.bbox_vote(fields[meta.head_index], bbox, meta)
@@ -424,7 +419,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         assert meta.is_classification # rest is not implemented
         # rescale bbox so its fit fields (divide by stride = 8 hardcoded for now)
-        bbox = [val/8 for val in bbox] 
+        bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
         bbox = np.round(bbox).astype(np.int)
         w = bbox[2]
         h = bbox[3]
@@ -432,10 +427,12 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         y = bbox[1]
 
         pred = 0.0
-        for x_i in range(x, x + w):
-            for y_k in range(y, y + h):
+        for y_k in range(y, np.clip(y + h, 0, field.shape[1])):
+            for x_i in range(x, np.clip(x + w, 0, field.shape[2])):
                 pred += field[:, y_k, x_i]
-        pred = pred / (w*h)
+
+        denom = w*h if w*h > 0 else 0
+        pred = pred / denom
         pred = 1. / (1. + np.exp(-pred))
 
         return pred
