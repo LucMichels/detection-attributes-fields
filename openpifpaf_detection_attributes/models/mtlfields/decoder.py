@@ -431,8 +431,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             for x_i in range(x, np.clip(x + w, 0, field.shape[2])):
                 pred += field[:, y_k, x_i]
 
-        denom = w*h if w*h > 0 else 0
-        pred = pred / denom
+        pred = pred / w*h if w*h > 0 else 0
         pred = 1. / (1. + np.exp(-pred))
 
         return pred
