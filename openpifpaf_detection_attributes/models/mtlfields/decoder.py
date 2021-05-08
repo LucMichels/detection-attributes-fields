@@ -367,7 +367,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["confidence"] = 1
 
                 # for now we remove detections that are too small but we might try with setting these to 1
-                if width/8 >= 1.0 or height/8 >= 1.0:
+                if w/8 >= 1.0 or h/8 >= 1.0:
                     for meta in self.attribute_metas:
                         att = self.bbox_vote(fields[meta.head_index], bbox, meta)
                         attributes[meta.attribute] = att
