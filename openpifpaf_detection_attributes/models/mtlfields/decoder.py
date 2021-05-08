@@ -435,7 +435,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
         gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
         g  = np.outer(gy, gx)
-        print(g.shape, field.squeeze(0).shape)
 
         pred = np.sum(g*field.squeeze(0))
 
