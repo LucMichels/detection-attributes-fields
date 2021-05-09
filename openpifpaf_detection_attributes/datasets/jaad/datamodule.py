@@ -110,6 +110,10 @@ class Jaad(openpifpaf.datasets.DataModule):
         group.add_argument('--jaad-image-height-stride',
                            default=cls.image_height_stride, type=int,
                            help='stride to compute height of image')
+        group.add_argument('--jaad-invert',
+                           dest='jaad_invert', type=int,
+                           default=0,
+                           help='Invert label of crossing pedestrians x frames before they cross (eg: "30": pedestrians is considered crossing 30 frames before he actually does')
         assert cls.fast_scaling
         group.add_argument('--jaad-no-fast-scaling',
                            dest='jaad_fast_scaling',
@@ -120,6 +124,20 @@ class Jaad(openpifpaf.datasets.DataModule):
                            dest='jaad_augmentation',
                            default=True, action='store_false',
                            help='do not apply data augmentation')
+
+        # Filtering
+        group.add_argument('--jaad-truncate',
+                           dest='jaad_truncate',
+                           default=False, action='store_true',
+                           help='on evaluation only consider  frames before crossing')
+        group.add_argument('--jaad-slice',
+                           dest='jaad_slice', nargs=2, type=int,
+                           default=[0, 0],
+                           help='on evaluation only consider a slice of frames. First argument is where to slice as the distance in frames where the pedestrian crosses \
+                           (eg: "30": from 30 frames before he crosses, "-30": from 30 frames after he crosses ) \
+                           Second argument is the size in frames of the slice (takes the x previous frames')
+
+
 
 
     @classmethod
@@ -148,7 +166,12 @@ class Jaad(openpifpaf.datasets.DataModule):
         cls.image_height_stride = args.jaad_image_height_stride
         cls.fast_scaling = args.jaad_fast_scaling
         cls.augmentation = args.jaad_augmentation
+        cls.invert = args.jaad_invert
 
+        # Filtering
+        cls.truncate = args.jaad_truncate
+        cls.slice = args.jaad_slice
+        
 
     def _common_preprocess_op(self):
         return [
@@ -196,6 +219,9 @@ class Jaad(openpifpaf.datasets.DataModule):
             root_dir=self.root_dir,
             split=self.train_set,
             subset=self.subset,
+            truncate=self.truncate,
+            slice=self.slice,
+            invert=self.invert,
             preprocess=self._train_preprocess(),
         )
         return torch.utils.data.DataLoader(
@@ -214,6 +240,9 @@ class Jaad(openpifpaf.datasets.DataModule):
             root_dir=self.root_dir,
             split=self.val_set,
             subset=self.subset,
+            truncate=self.truncate,
+            slice=self.slice,
+            invert=self.invert,
             preprocess=self._train_preprocess(),
         )
         return torch.utils.data.DataLoader(
@@ -232,6 +261,9 @@ class Jaad(openpifpaf.datasets.DataModule):
             root_dir=self.root_dir,
             split=self.test_set,
             subset=self.subset,
+            truncate=self.truncate,
+            slice=self.slice,
+            invert=self.invert,
             preprocess=self._eval_preprocess(),
         )
         return torch.utils.data.DataLoader(

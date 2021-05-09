@@ -22,6 +22,11 @@ class JaadDataset(torch.utils.data.Dataset):
         split (str: 'train', 'val', 'test'): Split of dataset.
         subset (str: 'default', 'all_videos', 'high_visibility'): Set of
             videos to use.
+        truncate (bool): On evaluation only consider frames before crossing
+        slice (int, int): On evaluation only consider a slice of frames. First argument is where to slice as the distance in frames where the pedestrian crosses \
+                           (eg: "30": from 30 frames before he crosses, "-30": from 30 frames after he crosses ) \
+                           Second argument is the size in frames of the slice (takes the x previous frames')
+        invert (int): Invert label of crossing pedestrians x frames before they cross (eg: "30": pedestrians is considered crossing 30 frames before he actually does
         preprocess (Callable): A function/transform that takes in the
             image and targets and transforms them.
     """
@@ -30,6 +35,9 @@ class JaadDataset(torch.utils.data.Dataset):
                  root_dir: str,
                  split: str,
                  subset: str,
+                 truncate: bool,
+                 slice: (int, int),
+                 invert: int,
                  *,
                  preprocess: Callable = None):
         super().__init__()
@@ -64,6 +72,10 @@ class JaadDataset(torch.utils.data.Dataset):
                     'frame_id': img_id,
                 })
 
+        self.truncate = truncate
+        self.slice = slice
+        self.invert = invert
+
         LOG.info('JAAD {0} {1} images: {2}'.format(self.subset, self.split,
                                                    len(self.idx_to_ids)))
 
@@ -87,6 +99,8 @@ class JaadDataset(torch.utils.data.Dataset):
                              ['ped_annotations']
                              [ped_id]
                              ['frames']).index(ids['frame_id'])
+
+            print(ped_id, self.db[ids['video_name']]['ped_annotations'][ped_id]['frames'])
 
             ped = {}
             ped['object_type'] = JaadType.PEDESTRIAN
@@ -178,6 +192,26 @@ class JaadDataset(torch.utils.data.Dataset):
                         and app_seq_id is not None)
                     else None
                 )
+
+            # Filtering
+            if self.truncate and ped['will_cross']:
+                if ped['frames_to_crossing'] < 0:
+                    ped['ignore_eval'] = True
+
+            if self.snip[1] > 0 and ped['will_cross']:
+                slice_from, slice_size = self.slice
+                if not (ped['frames_to_crossing'] - slice_from >= 0 and ped['frames_to_crossing'] - slice_from < slice_size):
+                    ped['ignore_eval'] = True
+
+            # Pre-processing invertion
+            if self.invert > 0 and ped['will_cross'] and ped['frames_to_crossing'] >= 0:
+                if ped['frames_to_crossing'] < self.invert:
+                    ped["is_crossing"] = 1
+
+            # Not crossing attribute
+            ped["is_not_crossing"] = 1 - ped["is_crossing"]
+
+
             # Add pedestrian
             anns.append(ped)
 
