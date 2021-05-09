@@ -198,7 +198,7 @@ class JaadDataset(torch.utils.data.Dataset):
                 if ped['frames_to_crossing'] < 0:
                     ped['ignore_eval'] = True
 
-            if self.snip[1] > 0 and ped['will_cross']:
+            if self.slice[1] > 0 and ped['will_cross']:
                 slice_from, slice_size = self.slice
                 if not (ped['frames_to_crossing'] - slice_from >= 0 and ped['frames_to_crossing'] - slice_from < slice_size):
                     ped['ignore_eval'] = True
