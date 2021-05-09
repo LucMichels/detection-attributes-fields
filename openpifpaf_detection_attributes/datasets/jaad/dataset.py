@@ -105,7 +105,7 @@ class JaadDataset(torch.utils.data.Dataset):
                 diff = frames[i] - frames[i-1] 
                 if diff > 1:
                     print()
-                    print(f"Faulty frames: frame i-1 -> {frames[i]}, frame i -> {frames[i-1]}, frame diff -> {diff}, ped_id -> {ped_id}")
+                    print(f"Faulty frames: frame i-1 -> {frames[i-1]}, frame i -> {frames[i]}, frame diff -> {diff}, ped_id -> {ped_id}")
                     sys.stdout.flush()
                     1/0
 
@@ -140,8 +140,8 @@ class JaadDataset(torch.utils.data.Dataset):
             if ped['will_cross'] == 1:
                 cross_t = next(t for t in range(len(crossing_behavior))
                                if crossing_behavior[t]==1) # start crossing
-                ped['frames_to_crossing'] = cross_t - seq_id
-                ped['time_to_crossing'] = (cross_t - seq_id) / 30. # conversion to seconds at 30fps
+                ped['frames_to_crossing'] = frames[cross_t] - frames[seq_id]
+                ped['time_to_crossing'] = (frames[cross_t] - frames[seq_id]) / 30. # conversion to seconds at 30fps
             else:
                 ped['frames_to_crossing'] = None
                 ped['time_to_crossing'] = None
