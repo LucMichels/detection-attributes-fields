@@ -53,7 +53,7 @@ mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
-srun time -u python3 -m openpifpaf.train \
+srun time python3 -m openpifpaf.train \
   --output ${xpdir}/checkpoints/model.pt \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \

@@ -106,7 +106,28 @@ class JaadDataset(torch.utils.data.Dataset):
                 if diff > 1:
                     print()
                     print("Faulty frames", frames[i], frames[i-1], diff, ped_id)
-                    print(1/0)
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print("AHHHHHHHHHHHHHHHHHHHHH")
+
+                    1/0
 
             ped = {}
             ped['object_type'] = JaadType.PEDESTRIAN
