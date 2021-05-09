@@ -38,7 +38,7 @@ epochs=5
 mtlgradmerge='power'
 
 attributes='all'
-duplicates=35
+duplicates=36
 taskweight=7.0
 lambdas="${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"
 
