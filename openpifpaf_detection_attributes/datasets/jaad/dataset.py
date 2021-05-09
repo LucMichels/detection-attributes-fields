@@ -100,7 +100,11 @@ class JaadDataset(torch.utils.data.Dataset):
                              [ped_id]
                              ['frames']).index(ids['frame_id'])
 
-            print(ped_id, self.db[ids['video_name']]['ped_annotations'][ped_id]['frames'])
+            frames = self.db[ids['video_name']]['ped_annotations'][ped_id]['frames']
+            for i in range(1, len(frames)):
+                diff = frames[i] - frames[i-1] 
+                if diff > 1:
+                    print(frames[i], frames[i-1], diff, ped_id)
 
             ped = {}
             ped['object_type'] = JaadType.PEDESTRIAN
