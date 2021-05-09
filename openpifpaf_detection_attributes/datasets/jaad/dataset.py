@@ -105,27 +105,7 @@ class JaadDataset(torch.utils.data.Dataset):
                 diff = frames[i] - frames[i-1] 
                 if diff > 1:
                     print()
-                    print("Faulty frames", frames[i], frames[i-1], diff, ped_id)
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
-                    print("AHHHHHHHHHHHHHHHHHHHHH")
+                    print(f"Faulty frames: frame i-1 -> {frames[i]}, frame i -> {frames[i-1]}, frame diff -> {diff}, ped_id -> {ped_id}")
                     sys.stdout.flush()
                     1/0
 
