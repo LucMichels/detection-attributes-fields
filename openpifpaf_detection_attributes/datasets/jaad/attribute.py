@@ -18,6 +18,7 @@ JAAD_ATTRIBUTE_METAS = {
         {'attribute': 'time_to_crossing',    'group': 'intention',  'only_on_instance': True,  'is_classification': False, 'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': -2.4, 'mean': -2.4, 'std': 2.8},
         # Behavior
         {'attribute': 'is_crossing',         'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
+        {'attribute': 'is_not_crossing',     'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
         {'attribute': 'look',                'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
         {'attribute': 'walk',                'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 1},
         {'attribute': 'motion_direction',    'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 2, 'default': 0, 'labels': {0: 'lateral', 1: 'longitudinal'}},
