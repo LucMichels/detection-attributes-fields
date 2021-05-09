@@ -40,7 +40,7 @@ epochs=251
 
 attributes='is_crossing is_not_crossing'
 duplicates=5
-lambdas="100 100 1.0 1.0"
+lambdas="1.0 1.0 1.0 1.0"
 
 sthreshold=0.2
 minclustersize=10
