@@ -101,13 +101,13 @@ class JaadDataset(torch.utils.data.Dataset):
                              ['frames']).index(ids['frame_id'])
 
             frames = self.db[ids['video_name']]['ped_annotations'][ped_id]['frames']
-            for i in range(1, len(frames)):
-                diff = frames[i] - frames[i-1] 
-                if diff > 1:
-                    print()
-                    print(f"Faulty frames: frame i-1 -> {frames[i-1]}, frame i -> {frames[i]}, frame diff -> {diff}, ped_id -> {ped_id}")
-                    sys.stdout.flush()
-                    1/0
+            # for i in range(1, len(frames)):
+            #     diff = frames[i] - frames[i-1] 
+            #     if diff > 1:
+            #         print()
+            #         print(f"Faulty frames: frame i-1 -> {frames[i-1]}, frame i -> {frames[i]}, frame diff -> {diff}, ped_id -> {ped_id}")
+            #         sys.stdout.flush()
+            #         1/0
 
             ped = {}
             ped['object_type'] = JaadType.PEDESTRIAN
