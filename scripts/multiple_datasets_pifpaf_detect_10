@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=10:31:00
+#SBATCH --time=02:31:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -40,7 +40,7 @@ epochs=251
 
 attributes='will_cross'
 duplicates=5
-lambdas="100 1.0 1.0"
+lambdas="10 1.0 1.0"
 
 sthreshold=0.2
 minclustersize=10
