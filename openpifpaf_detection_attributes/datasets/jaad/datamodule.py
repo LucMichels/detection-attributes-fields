@@ -114,6 +114,7 @@ class Jaad(openpifpaf.datasets.DataModule):
                            dest='jaad_invert', type=int,
                            default=0,
                            help='Invert label of crossing pedestrians x frames before they cross (eg: "30": pedestrians is considered crossing 30 frames before he actually does')
+        
         assert cls.fast_scaling
         group.add_argument('--jaad-no-fast-scaling',
                            dest='jaad_fast_scaling',
