@@ -126,7 +126,7 @@ class JaadDataset(torch.utils.data.Dataset):
                     print("AHHHHHHHHHHHHHHHHHHHHH")
                     print("AHHHHHHHHHHHHHHHHHHHHH")
                     print("AHHHHHHHHHHHHHHHHHHHHH")
-
+                    sys.stdout.flush()
                     1/0
 
             ped = {}
