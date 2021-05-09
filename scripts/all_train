@@ -40,7 +40,7 @@ mtlgradmerge='power'
 attributes='all'
 duplicates=35
 taskweight=7.0
-lambdas="${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"
+lambdas="${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"
 
 sthreshold=0.2
 minclustersize=10
