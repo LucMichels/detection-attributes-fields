@@ -104,8 +104,9 @@ class JaadDataset(torch.utils.data.Dataset):
             for i in range(1, len(frames)):
                 diff = frames[i] - frames[i-1] 
                 if diff > 1:
-                    print(frames[i], frames[i-1], diff, ped_id)
-                    1/0
+                    print()
+                    print("Faulty frames", frames[i], frames[i-1], diff, ped_id)
+                    print(1/0)
 
             ped = {}
             ped['object_type'] = JaadType.PEDESTRIAN
