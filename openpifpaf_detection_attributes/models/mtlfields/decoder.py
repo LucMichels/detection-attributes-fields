@@ -292,7 +292,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
     def __call__(self, fields, initial_annotations=None):
 
-
+        start = time.perf_counter()
         if not self.decoder_use_pifpaf_bbox:
             # Field S
             s_meta = [meta for meta in self.attribute_metas
@@ -374,7 +374,9 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
                     pred = self.annotation(**attributes)
                     predictions.append(pred)
-
+                    
+            LOG.info('predictions %d, %.3fs',
+                      len(predictions), time.perf_counter()-start)
         return predictions
 
     def cluster_vote(self, field, cluster, meta, conf_field):
