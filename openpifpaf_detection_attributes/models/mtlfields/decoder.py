@@ -355,7 +355,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
             parser = argparse.ArgumentParser()
             cifcaf_dec.cli(parser)
-            args = parser.parse_known_args()
+            args, _ = parser.parse_known_args()
             cifcaf_dec.configure(args)
             annotations_cifcaf = cifcaf_dec(fields)
 
