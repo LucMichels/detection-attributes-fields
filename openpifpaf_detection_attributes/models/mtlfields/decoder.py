@@ -353,12 +353,9 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
             assert len(cif_head) == len(caf_head) and len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
-            parser = argparse.ArgumentParser(
-                prog='python3 -m openpifpaf.eval',
-                usage='%(prog)s [options]',
-                description=__doc__
-            )
-            args = parser.parse_args()
+            parser = argparse.ArgumentParser()
+            cifcaf_dec.cli(parser)
+            args = parser.parse_known_args()
             cifcaf_dec.configure(args)
             annotations_cifcaf = cifcaf_dec(fields)
 
