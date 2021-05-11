@@ -84,10 +84,8 @@ class CifCaf():
         group.add_argument('--nms-before-force-complete', default=False, action='store_true',
                            help='run an additional NMS before completing poses')
 
-        print(utils.nms.Keypoints.keypoint_threshold, cls.keypoint_threshold)
-        sys.stdout.flush()
 
-        assert utils.nms.Keypoints.keypoint_threshold == cls.keypoint_threshold
+        #assert utils.nms.Keypoints.keypoint_threshold == cls.keypoint_threshold
         group.add_argument('--keypoint-threshold', type=float,
                            default=cls.keypoint_threshold,
                            help='filter keypoints by score')
