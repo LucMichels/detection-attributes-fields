@@ -24,7 +24,7 @@ class CifCaf():
     """
     connection_method = 'blend'
     occupancy_visualizer = visualizer.Occupancy()
-    force_complete = True
+    force_complete = False
     force_complete_caf_th = 0.001
     greedy = False
     keypoint_threshold = 0.15

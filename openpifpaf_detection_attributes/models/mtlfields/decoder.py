@@ -2,6 +2,7 @@ import argparse
 import logging
 import time
 from typing import List
+import sys
 
 import numpy as np
 import openpifpaf
@@ -352,6 +353,14 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
             assert len(cif_head) == len(caf_head) and len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
             cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
+            parser = argparse.ArgumentParser(
+                prog='python3 -m openpifpaf.eval',
+                usage='%(prog)s [options]',
+                description=__doc__,
+                formatter_class=CustomFormatter,
+            )
+            args = parser.parse_args()
+            cifcaf_dec.configure(args)
             annotations_cifcaf = cifcaf_dec(fields)
 
             predictions = []
@@ -364,8 +373,9 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["center"] = c
                 attributes["width"]  = w
                 attributes["height"] = h
-                print(ann.score)
                 attributes["confidence"] = ann.score
+                print(ann.score)
+                sys.stdout.flush()
 
                 # for now we remove detections that are too small but we might try with setting these to 1
                 if w/8 >= 1.0 and h/8 >= 1.0:
