@@ -361,26 +361,26 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
             predictions = []
             for ann in annotations_cifcaf:
-                bbox = ann.bbox()
 
-                attributes = {}
+                if ann.score > 0:
+                    bbox = ann.bbox()
 
-                c, w, h = self.get_center_width_height_from(bbox)
-                attributes["center"] = c
-                attributes["width"]  = w
-                attributes["height"] = h
-                attributes["confidence"] = ann.score
-                print(ann.score)
-                sys.stdout.flush()
+                    attributes = {}
 
-                # for now we remove detections that are too small but we might try with setting these to 1
-                if w/8 >= 1.0 and h/8 >= 1.0:
-                    for meta in self.attribute_metas:
-                        att = self.bbox_vote(fields[meta.head_index], bbox, meta)
-                        attributes[meta.attribute] = att
+                    c, w, h = self.get_center_width_height_from(bbox)
+                    attributes["center"] = c
+                    attributes["width"]  = w
+                    attributes["height"] = h
+                    attributes["confidence"] = ann.score
 
-                    pred = self.annotation(**attributes)
-                    predictions.append(pred)
+                    # for now we remove detections that are too small but we might try with setting these to 1
+                    if w/8 >= 1.0 and h/8 >= 1.0:
+                        for meta in self.attribute_metas:
+                            att = self.bbox_vote(fields[meta.head_index], bbox, meta)
+                            attributes[meta.attribute] = att
+
+                        pred = self.annotation(**attributes)
+                        predictions.append(pred)
                     
             LOG.info('predictions %d, %.3fs',
                       len(predictions), time.perf_counter()-start)
