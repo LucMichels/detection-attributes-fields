@@ -364,7 +364,8 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                 attributes["center"] = c
                 attributes["width"]  = w
                 attributes["height"] = h
-                attributes["confidence"] = 1
+                print(ann.score)
+                attributes["confidence"] = ann.score
 
                 # for now we remove detections that are too small but we might try with setting these to 1
                 if w/8 >= 1.0 and h/8 >= 1.0:
