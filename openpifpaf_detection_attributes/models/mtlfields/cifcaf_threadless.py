@@ -115,6 +115,9 @@ class CifCaf():
         group.add_argument('--ablation-independent-kp',
                            default=False, action='store_true')
 
+        group.add_argument('--seed-threshold', default=utils.CifSeeds.threshold, type=float,
+                            help='minimum threshold for seeds')
+
     @classmethod
     def configure(cls, args: argparse.Namespace):
         """Take the parsed argument parser output and configure class variables."""
