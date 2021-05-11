@@ -6,6 +6,7 @@ import time
 from typing import List
 
 import numpy as np
+import sys
 
 from openpifpaf.annotation import Annotation
 from openpifpaf.decoder import utils
@@ -82,6 +83,9 @@ class CifCaf():
         assert not cls.nms_before_force_complete
         group.add_argument('--nms-before-force-complete', default=False, action='store_true',
                            help='run an additional NMS before completing poses')
+
+        print(utils.nms.Keypoints.keypoint_threshold, cls.keypoint_threshold)
+        sys.stdout.flush()
 
         assert utils.nms.Keypoints.keypoint_threshold == cls.keypoint_threshold
         group.add_argument('--keypoint-threshold', type=float,
