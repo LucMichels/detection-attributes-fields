@@ -356,8 +356,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             parser = argparse.ArgumentParser(
                 prog='python3 -m openpifpaf.eval',
                 usage='%(prog)s [options]',
-                description=__doc__,
-                formatter_class=CustomFormatter,
+                description=__doc__
             )
             args = parser.parse_args()
             cifcaf_dec.configure(args)
