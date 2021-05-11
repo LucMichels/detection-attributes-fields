@@ -74,13 +74,11 @@ class CifCaf():
     def cli(cls, parser: argparse.ArgumentParser):
         """Command line interface (CLI) to extend argument parser."""
         group = parser.add_argument_group('CifCaf decoder')
-        assert not cls.force_complete
         group.add_argument('--force-complete-pose',
                            default=False, action='store_true')
         group.add_argument('--force-complete-caf-th', type=float,
                            default=cls.force_complete_caf_th,
                            help='CAF threshold for force complete. Set to -1 to deactivate.')
-        assert not cls.nms_before_force_complete
         group.add_argument('--nms-before-force-complete', default=False, action='store_true',
                            help='run an additional NMS before completing poses')
 
@@ -93,7 +91,6 @@ class CifCaf():
                            default=cls.keypoint_threshold_rel,
                            help='filter keypoint connections by relative score')
 
-        assert not cls.greedy
         group.add_argument('--greedy', default=False, action='store_true',
                            help='greedy decoding')
         group.add_argument('--connection-method',
@@ -103,7 +100,6 @@ class CifCaf():
         group.add_argument('--dense-connections', nargs='?', type=float,
                            default=0.0, const=1.0)
 
-        assert cls.reverse_match
         group.add_argument('--no-reverse-match',
                            default=True, dest='reverse_match', action='store_false')
         group.add_argument('--ablation-cifseeds-nms',
