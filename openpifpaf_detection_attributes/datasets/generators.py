@@ -244,11 +244,13 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gy = np.exp(-y**2/(2*sigma_y**2))
             gx = np.exp(-x**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
+            print(g.shape, t.shape)
 
             print(self.config.meta)
             print(t.shape, "t")
             print(self.targets.shape, "targets")
             print(t, "before")
+            sys.stdout.flush()
             t = g*t
             print(t, "after")
             sys.stdout.flush()
