@@ -3,5 +3,7 @@ from .. import generators
 
 
 JAAD_ATTRIBUTE_GENERATORS = {
-    JaadType.PEDESTRIAN: generators.BoxAttributeGenerator,
+    #JaadType.PEDESTRIAN: generators.BoxAttributeGenerator,
+    JaadType.PEDESTRIAN: generators.BoxGaussianAttributeGenerator,
+    
 }
