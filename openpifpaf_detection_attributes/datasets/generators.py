@@ -240,18 +240,20 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             sigma_x, sigma_y =float(w)/4, float(h)/4
             
             # activity map for current person
-            y, x = np.arange(t.shape[0]), np.arange(t.shape[1])    
+            y, x = np.arange(t.shape[1]), np.arange(t.shape[2])    
             gy = np.exp(-y**2/(2*sigma_y**2))
             gx = np.exp(-x**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
-            print(g.shape, t.shape)
+            print(g, 'gaussian')
 
             print(self.config.meta)
             print(t.shape, "t")
+            print(g.shape, 'g')
             print(self.targets.shape, "targets")
             print(t, "before")
             sys.stdout.flush()
             t = g*t
+
             print(t, "after")
             sys.stdout.flush()
             1/0
