@@ -245,7 +245,6 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gx = np.exp(-x**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
 
-            pred = np.sum(g*field.squeeze(0))
             print(self.config.meta)
             print(t.shape, "t")
             print(self.targets.shape, "targets")
