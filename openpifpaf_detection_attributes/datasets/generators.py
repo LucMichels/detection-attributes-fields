@@ -232,6 +232,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             np.expand_dims(valid_mask, axis=0).repeat(target_mask.shape[0],
                                                       axis=0)
         ]
+
+        # add the gaussian scaling
         if self.config.meta.is_classification:
 
             # generate the distribution centered at this box
@@ -244,19 +246,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
-            print(g, 'gaussian')
 
-            print(self.config.meta)
-            print(t.shape, "t")
-            print(g.shape, 'g')
-            print(self.targets.shape, "targets")
-            print(t, "before")
-            sys.stdout.flush()
             t = g*t
-
-            print(t, "after")
-            sys.stdout.flush()
-            1/0
 
         pd[valid_mask] = d_center[valid_mask]
         pb[valid_mask] = obj['box'][1] + obj['box'][3]
