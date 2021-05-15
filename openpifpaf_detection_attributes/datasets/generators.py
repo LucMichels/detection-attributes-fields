@@ -233,10 +233,25 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
                                                       axis=0)
         ]
         if self.config.meta.is_classification:
+
+            # generate the distribution centered at this box
+            w = x_end-x_start
+            h = y_end-y_start
+            x0, y0, sigma_x, sigma_y = x_start+float(x_end-x_start)/2, y_start+float()/2, float(w)/4, float(h)/4
+            
+            # activity map for current person
+            y, x = np.arange(field.shape[1]), np.arange(field.shape[2])    
+            gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
+            gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
+            g  = np.outer(gy, gx)
+
+            pred = np.sum(g*field.squeeze(0))
             print(self.config.meta)
             print(t.shape, "t")
             print(self.targets.shape, "targets")
-            print(t)
+            print(t, "before")
+            t = g*t
+            print(t, "after")
             sys.stdout.flush()
             1/0
 
