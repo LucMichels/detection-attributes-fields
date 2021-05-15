@@ -237,12 +237,12 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             # generate the distribution centered at this box
             w = x_end-x_start
             h = y_end-y_start
-            sigma_x, sigma_y =float(w)/4, float(h)/4
+            x0, y0, sigma_x, sigma_y = float(w)/2, float(h)/2, float(w)/4, float(h)/4
             
             # activity map for current person
             y, x = np.arange(t.shape[1]), np.arange(t.shape[2])    
-            gy = np.exp(-y**2/(2*sigma_y**2))
-            gx = np.exp(-x**2/(2*sigma_x**2))
+            gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
+            gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
             print(g, 'gaussian')
 
