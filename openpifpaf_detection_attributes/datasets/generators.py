@@ -232,7 +232,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             np.expand_dims(valid_mask, axis=0).repeat(target_mask.shape[0],
                                                       axis=0)
         ]
-        if obj['is_classification']:
+        if self.config.meta.is_classification:
+            print(self.config.meta)
             print(t.shape, "t")
             print(self.targets.shape, "targets")
             print(t)
