@@ -726,7 +726,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_30_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_1_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -752,7 +752,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_60_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_2_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -778,7 +778,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_90_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_3_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -804,7 +804,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_120_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_4_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -830,7 +830,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_30_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_t_1_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -857,7 +857,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_60_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_t_2_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -884,7 +884,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_90_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_t_3_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -911,7 +911,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_120_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
