@@ -4,7 +4,7 @@ import logging
 import math
 from typing import List
 import zipfile
-
+import sys
 import openpifpaf
 
 from .headmeta import AttributeMeta
@@ -67,6 +67,8 @@ def compute_ap(stats):
     return average_precision(recs, precs)
 
 def compute_precision(stats):
+    print(sum(stats['tp']), sum(stats['fp']))
+    sys.stdout.flush()
     return sum(stats['tp'])/(sum(stats['tp']) + sum(stats['fp']))
 
 def average_precision(rec, prec):
@@ -266,6 +268,9 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 text_labels.append(att_meta.attribute + '_P')
                 att_ap = sum(cls_aps) / len(cls_aps)
                 att_p = sum(cls_ps) / len(cls_ps)
+                
+                print(sum(cls_ps), len(cls_ps))
+                sys.stdout.flush()
 
                 stats.append(att_ap)
                 stats.append(att_p)
