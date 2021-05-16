@@ -49,6 +49,8 @@ clusterthreshold=0.5
 
 SECONDS=0
 
+
+
 cd /home/michels/detection-attributes-fields/
 
 mkdir -p ${xpdir}/predictions
@@ -56,7 +58,8 @@ mkdir -p ${xpdir}/images
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+validation_epoch=254
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -82,7 +85,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -108,7 +111,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -134,7 +137,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -160,7 +163,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -186,7 +189,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -213,7 +216,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -240,7 +243,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
@@ -267,7 +270,7 @@ do
   echo "Evaluation done!"
 done
 
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch254)
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
