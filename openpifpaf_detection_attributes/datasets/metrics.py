@@ -268,7 +268,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 text_labels.append(att_meta.attribute + '_P')
                 att_ap = sum(cls_aps) / len(cls_aps)
                 att_p = sum(cls_ps) / len(cls_ps)
-                
+                print(sum(cls_aps), len(cls_aps))
                 print(sum(cls_ps), len(cls_ps))
                 sys.stdout.flush()
 
