@@ -247,7 +247,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
 
         for att_meta in self.attribute_metas:
             cls_aps = []
-            cls_precisions = []
+            cls_ps = []
             for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
                 cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
                 cls_precision = compute_precision(self.det_stats[att_meta.attribute][cls])
