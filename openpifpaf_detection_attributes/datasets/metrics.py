@@ -250,7 +250,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
             cls_ps = []
             for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
                 cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
-                cls_precision = compute_precision(self.det_stats[att_meta.attribute][cls])
+                cls_p = compute_precision(self.det_stats[att_meta.attribute][cls])
                 cls_aps.append(cls_ap)
                 cls_ps.append(cls_p)
             if att_meta.attribute == 'confidence':
