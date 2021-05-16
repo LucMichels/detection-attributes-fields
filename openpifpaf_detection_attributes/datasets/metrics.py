@@ -66,6 +66,8 @@ def compute_ap(stats):
         )
     return average_precision(recs, precs)
 
+def compute_precision(stats):
+    return sum(stats['tp'])/(sum(stats['tp']) + sum(stats['fp']))
 
 def average_precision(rec, prec):
     rec.insert(0, 0.0) # insert 0.0 at begining of list
@@ -241,26 +243,48 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         stats = []
 
         att_aps = []
+        att_ps = []
+
         for att_meta in self.attribute_metas:
             cls_aps = []
+            cls_precisions = []
             for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
                 cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
+                cls_precision = compute_precision(self.det_stats[att_meta.attribute][cls])
                 cls_aps.append(cls_ap)
+                cls_ps.append(cls_p)
             if att_meta.attribute == 'confidence':
                 text_labels.append('detection_AP')
+                text_labels.append('detection_P')
                 stats.append(cls_aps[1])
+                stats.append(cls_ps[1])
                 att_aps.append(cls_aps[1])
+                att_ps.append(cls_ps[1])
                 LOG.info('detection AP = {}'.format(cls_aps[1]*100))
             else:
                 text_labels.append(att_meta.attribute + '_AP')
+                text_labels.append(att_meta.attribute + '_P')
                 att_ap = sum(cls_aps) / len(cls_aps)
+                att_p = sum(cls_ps) / len(cls_ps)
+
                 stats.append(att_ap)
+                stats.append(att_p)
+
                 att_aps.append(att_ap)
+                att_ps.append(att_p)
+
                 LOG.info('{} AP = {}'.format(att_meta.attribute, att_ap*100))
+                LOG.info('{} P = {}'.format(att_meta.attribute, att_p*100))
+
         text_labels.append('attribute_mAP')
+        text_labels.append('attribute_mP')
         map = sum(att_aps) / len(att_aps)
         stats.append(map)
         LOG.info('attribute mAP = {}'.format(map*100))
+        
+        map = sum(att_ps) / len(att_ps)
+        stats.append(map)
+        LOG.info('attribute mP = {}'.format(map*100))
 
         data = {
             'text_labels': text_labels,
@@ -281,3 +305,4 @@ class InstanceDetection(openpifpaf.metric.base.Base):
             with open(filename + '.pred_meta.json', 'w') as f:
                 json.dump(additional_data, f)
             LOG.info('wrote %s.pred_meta.json', filename)
+
