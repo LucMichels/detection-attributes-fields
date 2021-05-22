@@ -218,6 +218,10 @@ class JaadDataset(torch.utils.data.Dataset):
             # Not crossing attribute
             ped["is_not_crossing"] = 1 - ped["is_crossing"]
 
+            # Hazik regression attributess
+            ped["is_not_crossing_reg"] =  ped["is_not_crossing"]*1.0
+            ped["is_crossing_reg"] = ped["is_crossing"]*1.0
+
 
             # Add pedestrian
             anns.append(ped)
