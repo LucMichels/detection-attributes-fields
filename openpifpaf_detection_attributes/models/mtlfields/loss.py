@@ -51,7 +51,6 @@ class AttributeLoss(torch.nn.Module):
             if self.regression_loss == 'l1':
                 return torch.nn.L1Loss(reduction='none')
             elif self.regression_loss == 'l2':
-                1/0
                 return torch.nn.MSELoss(reduction='none')
             elif self.regression_loss == 'smoothl1':
                 return torch.nn.SmoothL1Loss(reduction='none')
