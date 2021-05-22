@@ -358,17 +358,11 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
         # Initialize ground truths
         for gt in ground_truth:
+
             if (
-                gt.ignore_eval
-                or (gt.attributes[attribute_meta.attribute] is None)
-                or (not attribute_meta.is_classification)
-                or (int(gt.attributes[attribute_meta.attribute]) == cls)
+                (not gt.ignore_eval)
             ):
-                if (
-                    (not gt.ignore_eval)
-                    and (gt.attributes[attribute_meta.attribute] is not None)
-                ):
-                    self.cros_stats['n_gt'] += 1
+                self.cros_stats['n_gt'] += 1
 
         # Match groud truths with closest predictions 
         for gt in ground_truth:
@@ -386,24 +380,18 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 else:
                     iou = 0.
 
-                if (iou > 0.) and (iou >= max_iou):
-                    if (
-                        (gt.attributes[attribute_meta.attribute] is None)
-                        or attribute_meta.is_classification
-                        or (abs(gt.attributes[attribute_meta.attribute]
-                            -pred.attributes[attribute_meta.attribute]) <= (cls+1)*.5)
-                    ):
-                        max_iou = iou
-                        match = gt
+                if (iou > 0) and (iou >= max_iou):
+                    
+                    max_iou = iou
+                    match = gt
 
 
             # Classify predictions as True Positives or False Positives
             if match is not None:
                 if (
                     (not match.ignore_eval)
-                    and (match.attributes[attribute_meta.attribute] is not None)
                 ): 
-                    # True positive
+                    # get prediction
                     self.cros_stats['score'].append(pred.attributes['score'])
                     pred = np.argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) # TODO TAKE THE MAX OF BOTH PREDICTIONS
                     print(pred, gt["is_crossing_reg"], "compare")
