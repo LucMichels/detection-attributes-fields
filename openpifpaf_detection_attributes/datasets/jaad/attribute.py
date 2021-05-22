@@ -16,6 +16,9 @@ JAAD_ATTRIBUTE_METAS = {
         # Intention
         {'attribute': 'will_cross',          'group': 'intention',  'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
         {'attribute': 'time_to_crossing',    'group': 'intention',  'only_on_instance': True,  'is_classification': False, 'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': -2.4, 'mean': -2.4, 'std': 2.8},
+        # Hazik
+        {'attribute': 'is_crossing_reg',     'group': 'hazik',      'only_on_instance': True,  'is_classification': False, 'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
+        {'attribute': 'is_not_crossing_reg', 'group': 'hazik',      'only_on_instance': True,  'is_classification': False, 'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
         # Behavior
         {'attribute': 'is_crossing',         'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},
         {'attribute': 'is_not_crossing',     'group': 'behavior',   'only_on_instance': True,  'is_classification': True,  'is_scalar': True,  'is_spatial': False, 'n_channels': 1, 'default': 0},

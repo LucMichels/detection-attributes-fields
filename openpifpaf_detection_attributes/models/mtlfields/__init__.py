@@ -19,5 +19,6 @@ def register():
         'fn-shufflenetv2k30', 'shufflenetv2k30')
     openpifpaf.HEADS[headmeta.AttributeMeta] = AttributeField
     #openpifpaf.DECODERS.add(InstanceDecoder)
-    openpifpaf.DECODERS.add(InstanceCIFCAFDecoder)
+    #openpifpaf.DECODERS.add(InstanceCIFCAFDecoder)
+    openpifpaf.DECODERS.add(InstanceHazikCIFCAFDecoder)
     openpifpaf.LOSSES[headmeta.AttributeMeta] = AttributeLoss
