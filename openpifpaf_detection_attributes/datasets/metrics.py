@@ -329,6 +329,9 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                                 if (am.is_classification)
                                 and (am.attribute == "is_crossing_reg"
                                 or am.attribute == "is_not_crossing_reg")]
+        print(self.attribute_metas)
+        print(len(self.attribute_metas))
+        print(sys.stdout.flush())
         assert len(self.attribute_metas) == 2 # only valid classification attributes (is_crossing and is_not_crossing) are allowed
 
         self.cros_stats = {
