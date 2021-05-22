@@ -394,10 +394,10 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     # get prediction
                     self.cros_stats['score'].append(pred.attributes['confidence'])
                     pred = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) # TODO TAKE THE MAX OF BOTH PREDICTIONS
-                    print(pred, gt["is_crossing_reg"], "compare")
+                    print(pred, gt.attributes["is_crossing_reg"], "compare")
 
                     self.cros_stats['pred'].append(pred)
-                    self.cros_stats['true'].append(int(gt["is_crossing_reg"]))
+                    self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
                 else:
                     # Ignore instance
                     pass
@@ -405,7 +405,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 # Default to predicting not crossing
                 self.cros_stats['score'].append(pred.attributes['confidence'])
                 self.cros_stats['pred'].append(0)
-                self.cros_stats['true'].append(int(gt["is_crossing_reg"]))        
+                self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))        
 
 
     def stats(self):
