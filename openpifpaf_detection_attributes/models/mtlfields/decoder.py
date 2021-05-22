@@ -556,7 +556,6 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
     def bbox_vote(self, field, bbox, meta):
         field = field.copy()
 
-        assert meta.is_classification # rest is not implemented
         # rescale bbox so its fit fields
         bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
         bbox = np.round(bbox).astype(np.int)
