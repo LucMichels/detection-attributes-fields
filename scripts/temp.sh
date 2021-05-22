@@ -934,7 +934,7 @@ do
 done
 
 # regression hazik
-validation_epoch=254
+validation_epoch=251
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
