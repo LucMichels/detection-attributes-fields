@@ -42,11 +42,6 @@ attributes='hazik'
 duplicates=2
 lambdas="1.0 1.0 1.0 1.0"
 
-sthreshold=0.2
-minclustersize=10
-epsilon=5.0
-clusterthreshold=0.5
-
 SECONDS=0
 
 cd /home/michels/detection-attributes-fields/

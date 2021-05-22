@@ -373,7 +373,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
             max_iou = -1.
             match = None
             for pred in predictions:
-                for 
                 if (('width' in pred.attributes)
                     and ('height' in pred.attributes)
                 ):
@@ -406,7 +405,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     1/0
                     # True positive
                     det_stats['score'].append(pred.attributes['score'])
-                    correct = match.attributes[attribute_meta.attribute]
+                    correct = match.attributes[attribute_meta.attribute] # TODO TAKE THE MAX OF BOTH PREDICTIONS
                     det_stats['tp'].append(correct)
                     det_stats['fp'].append(not correct)
                 else:
