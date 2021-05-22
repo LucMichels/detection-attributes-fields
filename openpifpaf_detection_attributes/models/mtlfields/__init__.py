@@ -1,7 +1,7 @@
 import openpifpaf
 
 from .basenetwork import ForkNormNetwork
-from .decoder import InstanceDecoder, InstanceCIFCAFDecoder
+from .decoder import InstanceDecoder, InstanceCIFCAFDecoder, InstanceHazikCIFCAFDecoder
 from .head import AttributeField
 from .loss import AttributeLoss
 from ...datasets import headmeta
