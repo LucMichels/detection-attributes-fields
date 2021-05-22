@@ -328,8 +328,8 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         print(attribute_metas)
         self.attribute_metas = [am for am in attribute_metas
                                 if (am.is_classification)
-                                and (am.attribute == "is_crossing_reg"
-                                or am.attribute == "is_not_crossing_reg")]
+                                and ((am.attribute == "is_crossing_reg")
+                                or (am.attribute == "is_not_crossing_reg"))]
         print(self.attribute_metas)
         print(len(self.attribute_metas))
         print(sys.stdout.flush())
