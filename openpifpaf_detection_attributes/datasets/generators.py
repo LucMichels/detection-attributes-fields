@@ -235,7 +235,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
 
         # add the gaussian scaling
         if self.config.meta.group == "hazik":
-
+            1/0
             # generate the distribution centered at this box
             w = x_end-x_start
             h = y_end-y_start
