@@ -392,7 +392,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     (not match.ignore_eval)
                 ): 
                     # get prediction
-                    self.cros_stats['score'].append(pred.attributes['score'])
+                    self.cros_stats['score'].append(pred.attributes['confidence'])
                     pred = np.argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) # TODO TAKE THE MAX OF BOTH PREDICTIONS
                     print(pred, gt["is_crossing_reg"], "compare")
 
