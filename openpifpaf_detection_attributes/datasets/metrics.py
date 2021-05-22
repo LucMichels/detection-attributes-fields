@@ -417,8 +417,8 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         att_ps = []
 
 
-        precision = compute_precision(self.self.cros_stats)
-        recall = compute_recall(self.self.cros_stats)
+        precision = compute_precision(self.cros_stats)
+        recall = compute_recall(self.cros_stats)
 
         text_labels.append('will_cross_P')
         text_labels.append('will_cross_R')
