@@ -11,6 +11,8 @@ from .headmeta import AttributeMeta
 
 from .jaad.annotation import JaadPedestrianAnnotation
 
+import sklearn
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 LOG = logging.getLogger(__name__)
 
@@ -67,9 +69,10 @@ def compute_ap(stats):
     return average_precision(recs, precs)
 
 def compute_precision(stats):
-    # print(sum(stats['tp']), sum(stats['fp']))
-    # sys.stdout.flush()
-    return sum(stats['tp'])/(sum(stats['tp']) + sum(stats['fp']))
+    return precision_score(stats['true'], stats['pred'], average=None, labels=[1])[0]
+
+def compute_recall(stats):
+    return recall_score(stats['true'], stats['pred'], average=None, labels=[1])[0]
 
 def average_precision(rec, prec):
     rec.insert(0, 0.0) # insert 0.0 at begining of list
@@ -324,15 +327,12 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
     def __init__(self, attribute_metas: List[AttributeMeta]):
         self.attribute_metas = [am for am in attribute_metas
                                 if (am.is_classification)
-                                and (am.attribute == "is_crossing"
-                                or am.attribute == "is_not_crossing")]
+                                and (am.attribute == "is_crossing_reg"
+                                or am.attribute == "is_not_crossing_reg")]
         assert len(self.attribute_metas) == 2 # only valid classification attributes (is_crossing and is_not_crossing) are allowed
 
-        self.cros_stats = {}
-        for att_meta in self.attribute_metas:
-            
-            self.det_stats[att_meta.attribute][cls] = {
-                'n_gt': 0, 'score': [], 'tp': [], 'fp': []
+        self.cros_stats = {
+                'n_gt': 0, 'score': [], 'pred': [], 'true': []
                 }
         self.predictions = {}
 
@@ -365,7 +365,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     (not gt.ignore_eval)
                     and (gt.attributes[attribute_meta.attribute] is not None)
                 ):
-                    det_stats['n_gt'] += 1
+                    self.cros_stats['n_gt'] += 1
 
         # Match groud truths with closest predictions 
         for gt in ground_truth:
@@ -400,27 +400,22 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     (not match.ignore_eval)
                     and (match.attributes[attribute_meta.attribute] is not None)
                 ): 
-                    print(gt)
-                    sys.stdout.flush()
-                    1/0
                     # True positive
-                    det_stats['score'].append(pred.attributes['score'])
-                    correct = match.attributes[attribute_meta.attribute] # TODO TAKE THE MAX OF BOTH PREDICTIONS
-                    det_stats['tp'].append(correct)
-                    det_stats['fp'].append(not correct)
+                    self.cros_stats['score'].append(pred.attributes['score'])
+                    pred = np.argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) # TODO TAKE THE MAX OF BOTH PREDICTIONS
+                    print(pred, gt["is_crossing_reg"], "compare")
+
+                    self.cros_stats['pred'].append(pred)
+                    self.cros_stats['true'].append(int(gt["is_crossing_reg"]))
                 else:
                     # Ignore instance
                     pass
             else:
                 # Default to predicting not crossing
-                det_stats['score'].append(pred.attributes['score'])
-
-                # TODO: add default | check gt attributes to get crossing values
-                print(gt)
-                sys.stdout.flush()
-                1/0
-                det_stats['tp'].append(0)
-                det_stats['fp'].append(1)           
+                self.cros_stats['score'].append(pred.attributes['score'])
+                
+                self.cros_stats['pred'].append(0)
+                self.cros_stats['true'].append(int(gt["is_crossing_reg"]))        
 
 
     def stats(self):
@@ -430,49 +425,17 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         att_aps = []
         att_ps = []
 
-        for att_meta in self.attribute_metas:
-            cls_aps = []
-            cls_ps = []
-            for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
-                cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
-                cls_p = compute_precision(self.det_stats[att_meta.attribute][cls])
-                cls_aps.append(cls_ap)
-                cls_ps.append(cls_p)
-            if att_meta.attribute == 'confidence':
-                text_labels.append('detection_AP')
-                text_labels.append('detection_P')
-                stats.append(cls_aps[1])
-                stats.append(cls_ps[1])
-                att_aps.append(cls_aps[1])
-                att_ps.append(cls_ps[1])
-                LOG.info('detection AP = {}'.format(cls_aps[1]*100))
-            else:
-                text_labels.append(att_meta.attribute + '_AP')
-                text_labels.append(att_meta.attribute + '_P')
-                att_ap = sum(cls_aps) / len(cls_aps)
-                att_p = sum(cls_ps) / len(cls_ps)
-                # print(sum(cls_aps), len(cls_aps))
-                # print(sum(cls_ps), len(cls_ps))
-                # sys.stdout.flush()
 
-                stats.append(att_ap)
-                stats.append(att_p)
+        precision = compute_precision(self.self.cros_stats)
+        recall = compute_recall(self.self.cros_stats)
 
-                att_aps.append(att_ap)
-                att_ps.append(att_p)
+        text_labels.append('will_cross_P')
+        text_labels.append('will_cross_R')
+        stats.append(precision)
+        stats.append(recall)
 
-                LOG.info('{} AP = {}'.format(att_meta.attribute, att_ap*100))
-                LOG.info('{} P = {}'.format(att_meta.attribute, att_p*100))
-
-        text_labels.append('attribute_mAP')
-        text_labels.append('attribute_mP')
-        map = sum(att_aps) / len(att_aps)
-        stats.append(map)
-        LOG.info('attribute mAP = {}'.format(map*100))
-        
-        map = sum(att_ps) / len(att_ps)
-        stats.append(map)
-        LOG.info('attribute mP = {}'.format(map*100))
+        LOG.info('will cross P = {}'.format(precision*100))
+        LOG.info('will cross R = {}'.format(recall*100))
 
         data = {
             'text_labels': text_labels,
