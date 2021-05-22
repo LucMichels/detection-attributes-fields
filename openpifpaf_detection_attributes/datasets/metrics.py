@@ -325,6 +325,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
     """
 
     def __init__(self, attribute_metas: List[AttributeMeta]):
+        print(attribute_metas)
         self.attribute_metas = [am for am in attribute_metas
                                 if (am.is_classification)
                                 and (am.attribute == "is_crossing_reg"
