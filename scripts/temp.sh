@@ -933,7 +933,7 @@ do
   echo "Evaluation done!"
 done
 
-# regression hazik
+# regression hazik eval
 validation_epoch=251
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
@@ -1128,7 +1128,6 @@ do
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
-
 # train regression
 srun time python3 -m openpifpaf.train \
   --output ${xpdir}/checkpoints/model.pt \
