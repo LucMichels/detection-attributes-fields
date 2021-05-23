@@ -355,12 +355,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                              ground_truth=None):
 
         # Initialize ground truths
-        for gt in ground_truth:
-
-            if (
-                (not gt.ignore_eval)
-            ):
-                self.cros_stats['n_gt'] += 1
+        ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
 
         # Match groud truths with closest predictions 
         for gt in ground_truth:
@@ -386,18 +381,13 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
             # Classify predictions as True Positives or False Positives
             if match is not None:
-                if (
-                    (not match.ignore_eval)
-                ): 
-                    # get prediction
-                    self.cros_stats['score'].append(pred.attributes['confidence'])
-                    pred = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) 
+                
+                # get prediction
+                self.cros_stats['score'].append(pred.attributes['confidence'])
+                pred = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) 
+                self.cros_stats['pred'].append(pred)
+                self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
 
-                    self.cros_stats['pred'].append(pred)
-                    self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
-                else:
-                    # Ignore instance
-                    pass
             else:
                 # Default to predicting not crossing
 
