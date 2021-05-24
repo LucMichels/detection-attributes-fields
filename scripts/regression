@@ -44,7 +44,7 @@ lambdas="1.0 1.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint='/home/michels/results/taylor/${SLURM_JOB_NAME}/checkpoints/model.pt.epoch255' # resnet50
+checkpoint='/home/michels/results/taylor/regression/checkpoints/model.pt.epoch255' # resnet50
 
 cd /home/michels/detection-attributes-fields/
 
