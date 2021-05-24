@@ -379,7 +379,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     match = pred
 
 
-            # Classify predictions as True Positives or False Positives
+            # Add predictions
             if match is not None:
                 
                 # get prediction
