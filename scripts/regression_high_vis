@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30 # 2:45
+#SBATCH --time=06:00:00 # 2:45
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -86,7 +86,7 @@ srun time python3 -m openpifpaf.train \
   2>&1 | tee ${xpdir}/logs/train_log.txt
 echo "Training done!"
 
-
+jaadsubset='high_visibility'
 
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
