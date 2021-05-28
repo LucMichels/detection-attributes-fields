@@ -50,7 +50,7 @@ class JaadDataset(torch.utils.data.Dataset):
         if subset not in {'default', 'all_videos', 'high_visibility'}:
             raise ValueError('unknown subset {}'.format(subset))
         self.subset = subset
-        if split in {'train', 'val', 'test', 'hazik_train', 'hazik_test'}:
+        if split in {'train', 'val', 'test'}:
             list_videos = jaad._get_video_ids_split(split, subset=self.subset)
         elif split == 'trainval':
             list_videos = (
