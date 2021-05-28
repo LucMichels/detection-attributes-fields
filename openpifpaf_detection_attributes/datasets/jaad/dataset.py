@@ -260,7 +260,7 @@ class JaadDataset(torch.utils.data.Dataset):
     def _get_split_from_range(self, id_range):
         split_ids = []
         for video_id in id_range:
-            vid_name = "video_{video_id:4d}"
+            vid_name = f"video_{video_id:4d}"
             split_ids.append(vid_name)
         return split_ids
 
