@@ -58,11 +58,12 @@ class JaadDataset(torch.utils.data.Dataset):
                 + jaad._get_video_ids_split('val', subset=self.subset)
             )
         elif split == 'hazik_train':
-            for s in jaad._get_video_ids_split('train', subset=self.subset):
+            print("hazik_train")
+            list_videos = self._get_split_from_range(range(1, 301))
+            for s in list_videos:
                 print(s)
-            for s in jaad._get_video_ids_split('val', subset=self.subset):
-                print(s)
-            for s in jaad._get_video_ids_split('test', subset=self.subset):
+            print("hazik_test")
+            for s in self._get_split_from_range(range(301, 347)):
                 print(s)
             sys.stdout.flush()
             1/0
@@ -255,3 +256,12 @@ class JaadDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.idx_to_ids)
+
+    def _get_split_from_range(id_range):
+        split_ids = []
+        for video_id in id_range:
+            vid_name = "video_{video_id:4d}"
+            split_ids.append(vid_name)
+        return split_ids
+
+
