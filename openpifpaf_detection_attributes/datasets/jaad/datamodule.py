@@ -81,7 +81,7 @@ class Jaad(openpifpaf.datasets.DataModule):
                            help='training set')
         group.add_argument('--jaad-validation-set',
                            default=cls.val_set,
-                           choices=['val', 'test'],
+                           choices=['val', 'test', 'hazik_test'],
                            help='validation set')
         group.add_argument('--jaad-testing-set',
                            default=cls.test_set,
