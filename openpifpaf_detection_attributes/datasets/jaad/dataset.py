@@ -57,6 +57,15 @@ class JaadDataset(torch.utils.data.Dataset):
                 jaad._get_video_ids_split('train', subset=self.subset)
                 + jaad._get_video_ids_split('val', subset=self.subset)
             )
+        elif split == 'hazik_train':
+            for s in jaad._get_video_ids_split('train', subset=self.subset):
+                print(s)
+            for s in jaad._get_video_ids_split('val', subset=self.subset):
+                print(s)
+            for s in jaad._get_video_ids_split('test', subset=self.subset):
+                print(s)
+            sys.stdout.flush()
+            1/0
         else:
             raise ValueError('unknown split {}'.format(split))
         self.split = split
