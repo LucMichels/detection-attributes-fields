@@ -112,6 +112,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         for att_meta in self.attribute_metas:
             if att_meta.is_classification:
                 n_classes = max(att_meta.n_channels, 2)
+                if att_meta.group == "hazik":
+                    n_classes = 1
             else:
                 n_classes = 10
             self.det_stats[att_meta.attribute] = {'n_classes': n_classes}
@@ -208,6 +210,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         if (
                             (gt.attributes[attribute_meta.attribute] is None)
                             or attribute_meta.is_classification
+                            or attribute_meta.group == 'hazik'
                             or (abs(gt.attributes[attribute_meta.attribute]
                                 -pred.attributes[attribute_meta.attribute]) <= (cls+1)*.5)
                         ):
@@ -222,10 +225,26 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (match.attributes[attribute_meta.attribute] is not None)
                     ):
                         if not gt_match[match.id]:
-                            # True positive
-                            det_stats['score'].append(pred.attributes['score'])
-                            det_stats['tp'].append(1)
-                            det_stats['fp'].append(0)
+
+                            if attribute_meta.group == 'hazik':
+                                preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
+                                prediction = argmax(preds) 
+                                softmax = np.exp(preds) / np.sum(np.exp(preds), axis=1)
+    
+                                tp = prediction == int(match.attributes[attribute_meta.attribute])
+                                det_stats['tp'].append(tp)
+                                det_stats['fp'].append(1-tp)
+
+                                if attribute_meta.attribute == 'is_not_crossing_reg':
+                                    det_stats['score'].append(softmax[0])
+                                else:
+                                    det_stats['score'].append(softmax[1])
+
+                            else:
+                                # True positive
+                                det_stats['score'].append(pred.attributes['score'])
+                                det_stats['tp'].append(1)
+                                det_stats['fp'].append(0)
 
                             gt_match[match.id] = True
                         else:
@@ -248,52 +267,42 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         stats = []
 
         att_aps = []
-        att_ps = []
+        hazik_aps = []
 
         for att_meta in self.attribute_metas:
             cls_aps = []
-            cls_ps = []
             for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
                 cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
-                cls_p = compute_precision(self.det_stats[att_meta.attribute][cls])
                 cls_aps.append(cls_ap)
-                cls_ps.append(cls_p)
             if att_meta.attribute == 'confidence':
                 text_labels.append('detection_AP')
-                text_labels.append('detection_P')
                 stats.append(cls_aps[1])
-                stats.append(cls_ps[1])
                 att_aps.append(cls_aps[1])
-                att_ps.append(cls_ps[1])
                 LOG.info('detection AP = {}'.format(cls_aps[1]*100))
+            elif att_meta.group == 'hazik':
+                hazik_aps.append(compute_ap(self.det_stats[att_meta.attribute][cls]))
             else:
                 text_labels.append(att_meta.attribute + '_AP')
-                text_labels.append(att_meta.attribute + '_P')
                 att_ap = sum(cls_aps) / len(cls_aps)
-                att_p = sum(cls_ps) / len(cls_ps)
-                # print(sum(cls_aps), len(cls_aps))
-                # print(sum(cls_ps), len(cls_ps))
-                # sys.stdout.flush()
 
                 stats.append(att_ap)
-                stats.append(att_p)
 
                 att_aps.append(att_ap)
-                att_ps.append(att_p)
 
                 LOG.info('{} AP = {}'.format(att_meta.attribute, att_ap*100))
-                LOG.info('{} P = {}'.format(att_meta.attribute, att_p*100))
+
+        if len(hazik_aps) > 0:
+            text_labels.append('hazik_crossing_AP')
+            hazik_ap = sum(hazik_aps) / len(hazik_aps)
+            stats.append(hazik_ap)
+            att_aps.append(hazik_ap)
+            LOG.info('{} AP = {}'.format('hazik crossing', att_ap*100))
 
         text_labels.append('attribute_mAP')
-        text_labels.append('attribute_mP')
         map = sum(att_aps) / len(att_aps)
         stats.append(map)
         LOG.info('attribute mAP = {}'.format(map*100))
         
-        map = sum(att_ps) / len(att_ps)
-        stats.append(map)
-        LOG.info('attribute mP = {}'.format(map*100))
-
         data = {
             'text_labels': text_labels,
             'stats': stats,
@@ -399,10 +408,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
     def stats(self):
         text_labels = []
         stats = []
-
-        att_aps = []
-        att_ps = []
-
 
         precision = compute_precision(self.cros_stats)
         recall = compute_recall(self.cros_stats)
