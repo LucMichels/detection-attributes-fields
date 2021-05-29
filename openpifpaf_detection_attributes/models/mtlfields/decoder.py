@@ -567,8 +567,8 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         field = field.squeeze(0) * 255
         field = cv2.resize(field,
-            (field.shape[0]*(meta.base_stride/meta.upsample_stride),
-            field.shape[1]*(meta.base_stride/meta.upsample_stride))
+            (int(field.shape[0]*(meta.base_stride/meta.upsample_stride)),
+            int(field.shape[1]*(meta.base_stride/meta.upsample_stride)))
             )
         
         # generate the distribution centered at this box
