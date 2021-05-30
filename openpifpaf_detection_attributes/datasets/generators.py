@@ -226,12 +226,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             (pd > d_center)
             | ((pd == d_center) & (pb < obj['box'][1]+obj['box'][3]))
         )
-        t[
-            np.expand_dims(valid_mask, axis=0).repeat(t.shape[0], axis=0)
-        ] = target_mask[
-            np.expand_dims(valid_mask, axis=0).repeat(target_mask.shape[0],
-                                                      axis=0)
-        ]
+
 
         # add the gaussian scaling
         if self.config.meta.group == "hazik":
@@ -239,20 +234,24 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             w = x_end-x_start
             h = y_end-y_start
             x0, y0, sigma_x, sigma_y = x_start+float(w)/2, y_start+float(h)/2, float(w)/4, float(h)/4
-            print("x0, y0, sigma_x, sigma_y", x0, y0, sigma_x, sigma_y)
             # activity map for current person
-            y, x = np.arange(t.shape[1]), np.arange(t.shape[2])    
+            y, x = np.arange(self.targets.shape[1]), np.arange(self.targets.shape[2])    
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
             print("before ", self.targets[:, y_start:y_end, x_start:x_end])
-            self.targets[:, y_start:y_end, x_start:x_end] = g*t
+            self.targets = np.amax([self.targets, g.unsqueeze(0)], axis=0) 
             print("after ", self.targets[:, y_start:y_end, x_start:x_end])
-            print("should be", g*t)
-            print("t", t)
             print("g", g)
             sys.stdout.flush()
             1/0
+        else:
+            t[
+                np.expand_dims(valid_mask, axis=0).repeat(t.shape[0], axis=0)
+            ] = target_mask[
+                np.expand_dims(valid_mask, axis=0).repeat(target_mask.shape[0],
+                                                          axis=0)
+            ]
 
 
         pd[valid_mask] = d_center[valid_mask]
