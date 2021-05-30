@@ -165,6 +165,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
 
     def init_fields(self, width_height):
         init_value = np.nan if self.config.meta.only_on_instance else 0.
+        init_value = 0. if self.config.meta.group == 'hazik' else init_value
         assert self.config.meta.n_channels > 0
         n_targets = (1 if self.config.meta.is_classification
                      else self.config.meta.n_channels)
@@ -242,7 +243,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             print("before ", self.targets[:, y_start:y_end, x_start:x_end])
             self.targets = np.amax([self.targets, np.expand_dims(g, axis=0)], axis=0) 
             print("after ", self.targets[:, y_start:y_end, x_start:x_end])
-            print("g", g)
+            print("g", g[:, y_start:y_end, x_start:x_end])
             sys.stdout.flush()
             1/0
         else:
