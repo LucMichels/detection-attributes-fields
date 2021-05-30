@@ -230,9 +230,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                                 preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
                                 prediction = argmax(preds) 
                                 sm = softmax(preds/sum(preds))
-                                print(sm, "other metric")
+                                # print(sm, "other metric")
 
-    
                                 tp = prediction == int(match.attributes[attribute_meta.attribute])
                                 det_stats['tp'].append(tp)
                                 det_stats['fp'].append(1-tp)
@@ -336,7 +335,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
     """
 
     def __init__(self, attribute_metas: List[AttributeMeta]):
-        print(attribute_metas)
         self.attribute_metas = [am for am in attribute_metas
                                 if ((am.attribute == "is_crossing_reg")
                                 or (am.attribute == "is_not_crossing_reg"))]
@@ -397,8 +395,8 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 self.cros_stats['score'].append(pred.attributes['confidence'])
                 preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
                 pred = argmax(preds) 
-                print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing_reg"]))
-                print(preds)
+                # print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing_reg"]))
+                # print(preds)
                 sys.stdout.flush()
 
                 self.cros_stats['pred'].append(pred)
