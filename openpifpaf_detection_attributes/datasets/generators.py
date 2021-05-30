@@ -240,12 +240,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
-            print("before ", self.targets[:, y_start:y_end, x_start:x_end])
             self.targets = np.amax([self.targets, np.expand_dims(g, axis=0)], axis=0) 
-            print("after ", self.targets[:, y_start:y_end, x_start:x_end])
-            print("g", g[y_start:y_end, x_start:x_end])
-            sys.stdout.flush()
-            1/0
+
         else:
             t[
                 np.expand_dims(valid_mask, axis=0).repeat(t.shape[0], axis=0)
