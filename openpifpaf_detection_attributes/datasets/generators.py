@@ -44,7 +44,7 @@ class BoxAttributeGenerator(AttributeGenerator):
             (n_targets, width_height[1], width_height[0]),
             init_value,
             dtype=np.float32,
-        ).astype(np.float)
+        )
         self.previous_distances = np.full((width_height[1], width_height[0]),
                                           np.inf, dtype=np.float32)
         self.previous_bottoms = np.full((width_height[1], width_height[0]),
@@ -239,8 +239,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             y, x = np.arange(self.targets.shape[1]), np.arange(self.targets.shape[2])    
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
-            g  = np.outer(gy, gx).astype(np.float)
-            self.targets = np.amax([self.targets, np.expand_dims(g, axis=0)], axis=0) 
+            g  = np.outer(gy, gx)
+            self.targets = np.amax([self.targets, np.expand_dims(g, axis=0).astype(np.float32)], axis=0).astype(np.float32)
 
         else:
             t[
