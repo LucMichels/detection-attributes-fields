@@ -13,7 +13,7 @@ from .jaad.annotation import JaadPedestrianAnnotation
 
 import sklearn
 from sklearn.metrics import precision_score, recall_score, f1_score
-
+from scipy.special import softmax
 LOG = logging.getLogger(__name__)
 
 
@@ -229,16 +229,17 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                             if attribute_meta.group == 'hazik':
                                 preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
                                 prediction = argmax(preds) 
-                                softmax = np.exp(preds) / np.sum(np.exp(preds), axis=1)
+                                sm = softmax(preds)
+
     
                                 tp = prediction == int(match.attributes[attribute_meta.attribute])
                                 det_stats['tp'].append(tp)
                                 det_stats['fp'].append(1-tp)
 
                                 if attribute_meta.attribute == 'is_not_crossing_reg':
-                                    det_stats['score'].append(softmax[0])
+                                    det_stats['score'].append(sm[0])
                                 else:
-                                    det_stats['score'].append(softmax[1])
+                                    det_stats['score'].append(sm[1])
 
                             else:
                                 # True positive
@@ -394,6 +395,9 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 # get prediction
                 self.cros_stats['score'].append(pred.attributes['confidence'])
                 pred = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) 
+                print(softmax(pred))
+                sys.stdout.flush()
+
                 self.cros_stats['pred'].append(pred)
                 self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
 
