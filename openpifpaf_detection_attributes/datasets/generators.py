@@ -243,7 +243,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             print("before ", self.targets[:, y_start:y_end, x_start:x_end])
             self.targets = np.amax([self.targets, np.expand_dims(g, axis=0)], axis=0) 
             print("after ", self.targets[:, y_start:y_end, x_start:x_end])
-            print("g", g[:, y_start:y_end, x_start:x_end])
+            print("g", g[y_start:y_end, x_start:x_end])
             sys.stdout.flush()
             1/0
         else:
