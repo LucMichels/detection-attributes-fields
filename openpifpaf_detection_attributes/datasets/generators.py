@@ -248,6 +248,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             print("before ", self.targets[:, y_start:y_end, x_start:x_end])
             t = g*t
             print("after ", self.targets[:, y_start:y_end, x_start:x_end])
+            sys.stdout.flush()
             1/0
 
 
