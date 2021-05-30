@@ -71,8 +71,7 @@ do
     --jaad-pedestrian-attributes ${attributes} \
     --head-consolidation=keep \
     --force-complete-pose --seed-threshold=0.2 \
-    --jaad-invert 120 \
-    --jaad-truncate \
+    --jaad-slice 0 30
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
