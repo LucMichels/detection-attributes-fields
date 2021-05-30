@@ -229,7 +229,8 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                             if attribute_meta.group == 'hazik':
                                 preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
                                 prediction = argmax(preds) 
-                                sm = softmax(preds)
+                                sm = softmax(preds/sum(preds))
+                                print(sm, "other metric")
 
     
                                 tp = prediction == int(match.attributes[attribute_meta.attribute])
