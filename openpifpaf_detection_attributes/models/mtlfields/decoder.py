@@ -570,8 +570,6 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
             int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
             )
-        print(field.shape[0], \
-              field.shape[1])
         sys.stdout.flush()
         # generate the distribution centered at this box
         x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
