@@ -59,9 +59,6 @@ class JaadDataset(torch.utils.data.Dataset):
             )
         elif split == 'hazik_train':
             list_videos = self._get_split_from_range(range(1, 301))
-            for s in list_videos:
-                print(s)
-            sys.stdout.flush()
         elif split == 'hazik_test':
             list_videos = self._get_split_from_range(range(301, 347))
         else:
