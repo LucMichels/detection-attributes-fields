@@ -249,7 +249,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             print("center",g[cy:cy+1,cx:cx+1])
             print("targets", self.targets[:,y_start:y_start+h+1, x_start:x_start+w+1])
             print("center",self.targets[:,cy:cy+1,cx:cx+1])
-            print("pred", pred)
+            print("pred", obj[self.config.meta.attribute])
             sys.stdout.flush()
             1/0
         else:
