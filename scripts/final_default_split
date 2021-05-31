@@ -53,7 +53,7 @@ mkdir -p ${xpdir}/images
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
 
-
+#fuck off
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
 do
   echo "Start evaluating ${evalfrom}..."
