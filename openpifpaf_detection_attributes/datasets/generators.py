@@ -242,6 +242,16 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             g  = np.outer(gy, gx)
             self.targets = np.amax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0).astype(np.float32)], axis=0).astype(np.float32)
 
+            cx, cy = x_start+w//2+1, y_start+h//2+1
+
+            print(cx, cy, w, h)
+            print("gaussian", g[y_start:y_start+h+1, x_start:x_start+w+1])
+            print("center",g[cy:cy+1,cx:cx+1])
+            print("targets", self.targets[:,y_start:y_start+h+1, x_start:x_start+w+1])
+            print("center",self.targets[:,cy:cy+1,cx:cx+1])
+            print("pred", pred)
+            sys.stdout.flush()
+            1/0
         else:
             t[
                 np.expand_dims(valid_mask, axis=0).repeat(t.shape[0], axis=0)

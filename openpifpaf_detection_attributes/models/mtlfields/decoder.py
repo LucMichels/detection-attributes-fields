@@ -571,19 +571,7 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         g  = np.outer(gy, gx)
 
         pred = np.sum(g*field)
-        c, w, h = self.get_center_width_height_from(bbox)
-        c, w, h = c, int(w), int(h)
 
-        x, y = bbox[0], bbox[1]
-        print(c, w, h)
-        print("gaussian", g[y:y+h+1, x:x+w+1])
-        print("center",g[int(c[1]):int(c[1])+1,int(c[0]):int(c[0])+1])
-        print("fildf", field[y:y+h+1, x:x+w+1])
-        print("center",field[int(c[1]):int(c[1])+1,int(c[0]):int(c[0])+1])
-        print("g*field", (g*field)[y:y+h+1, x:x+w+1])
-        print("pred", pred)
-        sys.stdout.flush()
-        1/0
 
         return pred
 
