@@ -297,7 +297,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
             hazik_ap = sum(hazik_aps) / len(hazik_aps)
             stats.append(hazik_ap)
             att_aps.append(hazik_ap)
-            LOG.info('{} AP = {}'.format('hazik crossing', att_ap*100))
+            LOG.info('{} AP = {}'.format('hazik crossing', hazik_ap*100))
 
         text_labels.append('attribute_mAP')
         map = sum(att_aps) / len(att_aps)
@@ -444,5 +444,4 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
             with open(filename + '.pred_meta.json', 'w') as f:
                 json.dump(additional_data, f)
             LOG.info('wrote %s.pred_meta.json', filename)
-
 

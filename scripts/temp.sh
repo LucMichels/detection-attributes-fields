@@ -1391,3 +1391,36 @@ do
   echo "Evaluation done!"
 done
 
+# final
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --ema 1e-3 \
+  --auto-tune-mtl \
+  --log-interval 10 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --weight-decay 0 \
+  --momentum 0.95 \
+  --checkpoint ${checkpoint} \
+  --attribute-regression-loss l2 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --jaad-invert 99999 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
