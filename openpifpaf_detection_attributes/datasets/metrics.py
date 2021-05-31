@@ -400,7 +400,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing_reg"]))
                 print(preds)
                 sys.stdout.flush()
-                1/0
+                
                 self.cros_stats['pred'].append(pred)
                 self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
 
