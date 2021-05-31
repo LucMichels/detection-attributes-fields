@@ -572,7 +572,7 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
         pred = np.sum(g*field)
         c, w, h = self.get_center_width_height_from(bbox)
-        if w < 20 and h < 20:
+        if w < 5 and h < 5:
             print("gaussian", g[y:y+h+1, x:x+w+1])
             print(g[c[1]:c[1]+1,c[0]:c[0]+1])
             print("fildf", field[y:y+h+1, x:x+w+1])
