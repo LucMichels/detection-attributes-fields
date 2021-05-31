@@ -574,6 +574,7 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         c, w, h = self.get_center_width_height_from(bbox)
         c, w, h = int(w), int(w), int(h)
         if w < 4 and h < 4:
+            x, y = bbox[0], bbox[1]
             print(c, w, h)
             print("gaussian", g[y:y+h+1, x:x+w+1])
             print("center",g[c[1]:c[1]+1,c[0]:c[0]+1])
