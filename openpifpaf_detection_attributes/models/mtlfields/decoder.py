@@ -571,9 +571,9 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         g  = np.outer(gy, gx)
 
         pred = np.sum(g*field)
-        print("gaussian", g)
-        print("fildf", field)
-        print("g*field", g*field)
+        print("gaussian", g[y:y+h+1, x:x+w+1])
+        print("fildf", field[y:y+h+1, x:x+w+1])
+        print("g*field", (g*field)[y:y+h+1, x:x+w+1])
         print("pred", pred)
         sys.stdout.flush()
         1/0
