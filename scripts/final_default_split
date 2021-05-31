@@ -37,7 +37,7 @@ COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=1e-5
 epochs=255
-validation_epoch=255
+validation_epoch=251
 attributes='hazik'
 duplicates=2
 lambdas="1.0 1.0 1.0 1.0"
