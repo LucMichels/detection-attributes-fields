@@ -434,16 +434,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         w = bbox[2]
         h = bbox[3]
         x = bbox[0] 
-        y = bbox[1]
-
-        # generate the distribution centered at this box
-        x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
-        
-        # activity map for current person
-        y, x = np.arange(field.shape[1]), np.arange(field.shape[2])    
-        gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
-        gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
-        g  = np.outer(gy, gx)
+        y = bbox[1]        
 
         pred = np.sum(g*field.squeeze(0))
 
@@ -580,6 +571,12 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         g  = np.outer(gy, gx)
 
         pred = np.sum(g*field)
+        print("gaussian", g)
+        print("fildf", field)
+        print("g*field", g*field)
+        print("pred", pred)
+        sys.stdout.flush()
+        1/0
 
         return pred
 
