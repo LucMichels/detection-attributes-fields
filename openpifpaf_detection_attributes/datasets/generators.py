@@ -36,7 +36,7 @@ class BoxAttributeGenerator(AttributeGenerator):
 
 
     def init_fields(self, width_height):
-        init_value = np.nan if self.config.meta.only_on_instance else 0.
+        init_value = np.nan if self.config.meta.only_on_instance else np.nan # TODO BACK TO 0.
         assert self.config.meta.n_channels > 0
         n_targets = (1 if self.config.meta.is_classification
                      else self.config.meta.n_channels)
@@ -229,7 +229,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
 
 
         # add the gaussian scaling
-        if self.config.meta.group == "nope":
+        if self.config.meta.group == "hazik":
             # generate the distribution centered at this box
             w = x_end-x_start
             h = y_end-y_start
@@ -239,7 +239,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
-            self.targets = np.amax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0).astype(np.float32)], axis=0).astype(np.float32)
+            self.targets = np.nanmax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0).astype(np.float32)], axis=0).astype(np.float32)
 
 
         else:
