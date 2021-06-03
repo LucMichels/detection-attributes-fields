@@ -548,7 +548,7 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         field = field.copy()
 
         # rescale bbox so its fit fields
-        #bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
+        bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
 
         bbox = np.round(bbox).astype(np.int)
         w = max(1, bbox[2])
@@ -556,11 +556,11 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         x = bbox[0] 
         y = bbox[1]
 
-        field = field.squeeze(0) * 255
-        field = cv2.resize(field,
-            (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
-            int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
-            )
+        field = field.squeeze(0)# * 255
+        # field = cv2.resize(field,
+        #     (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
+        #     int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
+        #     )
         # generate the distribution centered at this box
         x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
 
