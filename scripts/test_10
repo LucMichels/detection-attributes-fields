@@ -40,7 +40,7 @@ epochs=255
 validation_epoch=251
 attributes='hazik'
 duplicates=2
-lambdas="0.2 0.2 1.0 1.0"
+lambdas="10.0 10.0 1.0 1.0"
 
 SECONDS=0
 
