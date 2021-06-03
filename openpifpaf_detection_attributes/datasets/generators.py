@@ -182,8 +182,6 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
     def fill(self, objects):
         for obj in objects:
             self.fill_object(obj)
-        print("done", self.config.meta.attribute)
-        sys.stdout.flush()
 
 
     def fill_object(self, obj):
@@ -242,8 +240,6 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
             self.targets = np.nanmax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0)], axis=0).astype(np.float32)
-            print(obj["is_not_crossing_reg"], obj["is_crossing_reg"], obj[self.config.meta.attribute], self.config.meta.attribute)
-            sys.stdout.flush()
 
         else:
             t[
