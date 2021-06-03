@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:05:00 # 7:45:0
+#SBATCH --time=00:15:00 # 7:45:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -71,7 +71,8 @@ do
     --jaad-pedestrian-attributes ${attributes} \
     --head-consolidation=keep \
     --force-complete-pose --seed-threshold=0.2 \
-    --jaad-slice 0 30
+    --jaad-slice 0 30 \
+    --jaad-invert 30 \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
