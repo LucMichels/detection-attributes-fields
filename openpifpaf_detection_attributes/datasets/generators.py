@@ -182,6 +182,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
     def fill(self, objects):
         for obj in objects:
             self.fill_object(obj)
+        print("done", self.config.meta.attribute)
+        sys.stdout.flush()
 
 
     def fill_object(self, obj):
