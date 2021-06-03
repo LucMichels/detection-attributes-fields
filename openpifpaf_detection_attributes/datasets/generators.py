@@ -229,7 +229,7 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
 
 
         # add the gaussian scaling
-        if self.config.meta.group == "fak":
+        if self.config.meta.group == "hazik":
             # generate the distribution centered at this box
             w = x_end-x_start
             h = y_end-y_start
@@ -240,7 +240,8 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
             self.targets = np.nanmax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0).astype(np.float32)], axis=0).astype(np.float32)
-
+            print(obj["is_not_crossing_reg"], obj["is_crossing_reg"], obj[self.config.meta.attribute], self.config.meta.attribute)
+            sys.stdout.flush()
 
         else:
             t[
