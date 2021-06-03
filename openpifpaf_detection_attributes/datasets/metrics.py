@@ -409,7 +409,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
                 self.cros_stats['score'].append(0.0)
                 self.cros_stats['pred'].append(0)
-                self.cros_stats['true'].append(int(gt.attributes["is_not_crossing_reg"]))        
+                self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))        
 
 
     def stats(self):
