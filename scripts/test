@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=09:00:00 # 3:10:0
+#SBATCH --time=10:00:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -27,8 +27,8 @@ mkdir -p ${xpdir}/logs
 # Dataset
 dataset='jaad-cocokp'
 jaadsubset='default'
-trainsplit='train'
-evalsplit='val'
+trainsplit='hazik_train'
+evalsplit='hazik_test'
 # COCO
 COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
 COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.json'
@@ -36,11 +36,11 @@ COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=1e-5
-epochs=255
+epochs=254
 validation_epoch=251
 attributes='hazik'
 duplicates=2
-lambdas="0.2 0.2 1.0 1.0"
+lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
@@ -181,29 +181,6 @@ do
   echo "Evaluation done!"
 done
 
-validation_epoch=255
-
-for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch${validation_epoch})
-do
-  echo "Start evaluating ${evalfrom}..."
-  evalepoch=${evalfrom: -3}
-  srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
-    --dataset jaad \
-    --jaad-root-dir /work/vita/datasets/JAAD/ \
-    --jaad-subset ${jaadsubset} \
-    --jaad-testing-set ${evalsplit} \
-    --checkpoint ${evalfrom} \
-    --batch-size 6 \
-    --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes ${attributes} \
-    --head-consolidation=keep \
-    --force-complete-pose --seed-threshold=0.2 \
-    --jaad-invert 120 \
-    --jaad-truncate \
-    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-  echo "Evaluation done!"
-done
 
 cd -
 
