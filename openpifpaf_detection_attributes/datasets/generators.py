@@ -36,7 +36,7 @@ class BoxAttributeGenerator(AttributeGenerator):
 
 
     def init_fields(self, width_height):
-        init_value = np.nan if self.config.meta.only_on_instance else np.nan # TODO BACK TO 0.
+        init_value = np.nan if self.config.meta.only_on_instance else 0. # TODO BACK TO 0.
         assert self.config.meta.n_channels > 0
         n_targets = (1 if self.config.meta.is_classification
                      else self.config.meta.n_channels)
