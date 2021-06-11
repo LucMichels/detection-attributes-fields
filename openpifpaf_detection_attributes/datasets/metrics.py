@@ -397,19 +397,19 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 pred = argmax(preds) 
 
                 
-                print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing_reg"]))
+                print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing"]))
                 print(preds)
                 sys.stdout.flush()
                 
                 self.cros_stats['pred'].append(pred)
-                self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))
+                self.cros_stats['true'].append(int(gt.attributes["is_crossing"]))
 
             else:
                 # Default to predicting not crossing
 
                 self.cros_stats['score'].append(0.0)
                 self.cros_stats['pred'].append(0)
-                self.cros_stats['true'].append(int(gt.attributes["is_crossing_reg"]))        
+                self.cros_stats['true'].append(int(gt.attributes["is_crossing"]))        
 
 
     def stats(self):

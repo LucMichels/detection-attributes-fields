@@ -125,6 +125,10 @@ class Jaad(openpifpaf.datasets.DataModule):
                            dest='jaad_augmentation',
                            default=True, action='store_false',
                            help='do not apply data augmentation')
+        group.add_argument('--jaad-use-hazik-augmentation',
+                           dest='use_hazik_augmentation',
+                           default=False, action='store_true',
+                           help='apply hazik data augmentation. This overides any other augmentations')
 
         # Filtering
         group.add_argument('--jaad-truncate',
@@ -167,6 +171,7 @@ class Jaad(openpifpaf.datasets.DataModule):
         cls.image_height_stride = args.jaad_image_height_stride
         cls.fast_scaling = args.jaad_fast_scaling
         cls.augmentation = args.jaad_augmentation
+        cls.use_hazik_augmentation = args.use_hazik_augmentation
         cls.invert = args.jaad_invert
 
         # Filtering
@@ -185,7 +190,12 @@ class Jaad(openpifpaf.datasets.DataModule):
 
 
     def _train_preprocess(self):
-        if self.augmentation:
+        if self.use_hazik_augmentation:
+            data_augmentation_op = [
+                openpifpaf.transforms.RandomApply(transforms.HFlip(), 0.5),
+                transforms.EVAL_TRANSFORM,
+            ]
+        elif self.augmentation:
             data_augmentation_op = [
                 transforms.ZoomInOrOut(fast=self.fast_scaling),
                 openpifpaf.transforms.RandomApply(transforms.HFlip(), 0.5),
