@@ -521,7 +521,7 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         predictions = []
         for ann in annotations_cifcaf:
 
-            if ann.score > 0:
+            if ann.score >= 0:
                 bbox = ann.bbox()
 
                 attributes = {}
