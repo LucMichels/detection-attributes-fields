@@ -45,7 +45,8 @@ SECONDS=0
 
 checkpoint='/home/michels/results/taylor/evaluation/checkpoints/model.pt.epoch254'
 
-cd /home/michels/detection-attributes-fields/
+# cd /home/michels/detection-attributes-fields/
+cd /home/michels/temp_detect/
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
