@@ -43,7 +43,7 @@ lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint=resnet50
+checkpoint='/home/michels/results/taylor/evaluation/checkpoints/model.pt.epoch254'
 
 cd /home/michels/detection-attributes-fields/
 
