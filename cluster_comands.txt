@@ -86,7 +86,7 @@ scp -r michels@izar.epfl.ch:/home/michels/results/taylor/test/predictions/*.json
 scp -r michels@izar.epfl.ch:/home/michels/results/taylor/multiple_datasets_pifpaf_detect_gaussian_100/predictions/*.json multiple_datasets_pifpaf_detect_gaussian_100
 scp -r michels@izar.epfl.ch:/home/michels/results/testing_hazik.out im
 
-scp -r michels@izar.epfl.ch:/home/michels/results/taylor/multiple_datasets_pifpaf_detect_100/images/*.png images
+scp -r michels@izar.epfl.ch:/home/michels/results/taylor/value_0/images/*.png images
 
 scp -r michels@izar.epfl.ch:/home/michels/results/taylor/multiple_datasets_eval/images.zip images
 

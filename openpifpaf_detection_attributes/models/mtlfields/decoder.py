@@ -557,8 +557,6 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         y = bbox[1]
 
         field = field.squeeze(0)# * 255
-        print((int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
-             int(field.shape[0]*(meta.base_stride/meta.upsample_stride))))
         field = cv2.resize(field,
              (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
              int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
