@@ -392,7 +392,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
             if match is not None:
                 
                 # get prediction
-                self.cros_stats['score'].append(pred.attributes['confidence'])
+                self.cros_stats['score'].append(match.attributes['confidence'])
                 preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
                 pred = argmax(preds) 
 
