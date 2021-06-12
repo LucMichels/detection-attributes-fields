@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=01:00:00 # 3:10:0
+#SBATCH --time=00:15:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -27,8 +27,8 @@ mkdir -p ${xpdir}/logs
 # Dataset
 dataset='jaad-cocokp'
 jaadsubset='default'
-trainsplit='hazik_train'
-evalsplit='hazik_test'
+trainsplit='train'
+evalsplit='val'
 # COCO
 COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
 COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.json'
@@ -43,7 +43,7 @@ lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint='/home/michels/results/taylor/replication/checkpoints/model.pt.epoch254'
+checkpoint='/home/michels/results/taylor/scale/checkpoints/model.pt.epoch253'
 # checkpoint=resnet50
 cd /home/michels/detection-attributes-fields/
 # cd /home/michels/temp_detect/
