@@ -235,14 +235,17 @@ class BoxGaussianAttributeGenerator(AttributeGenerator):
             h = y_end-y_start
             x0, y0, sigma_x, sigma_y = x_start+float(w)/2, y_start+float(h)/2, float(w)/4, float(h)/4
 
-            print(self.targets.shape)
-            sys.stdout.flush()
+
             # activity map for current person
             y, x = np.arange(self.targets.shape[1]), np.arange(self.targets.shape[2])    
             gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
             gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
             g  = np.outer(gy, gx)
+            print(self.targets[:, y_start:y_end, x_start:x_end])
             self.targets = np.nanmax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0)], axis=0).astype(np.float32)
+            print(self.targets[:, y_start:y_end, x_start:x_end])
+            print("stuff it", np.nanmax([self.targets, np.expand_dims(g*obj[self.config.meta.attribute], axis=0)], axis=0).astype(np.float32))
+            sys.stdout.flush()
 
         else:
             t[
