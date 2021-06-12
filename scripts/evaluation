@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:20:00 # 3:10:0
+#SBATCH --time=01:00:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -43,10 +43,10 @@ lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint='/home/michels/results/taylor/test/checkpoints/model.pt.epoch256'
+checkpoint='/home/michels/results/taylor/replication/checkpoints/model.pt.epoch254'
 # checkpoint=resnet50
-# cd /home/michels/detection-attributes-fields/
-cd /home/michels/temp_detect/
+cd /home/michels/detection-attributes-fields/
+# cd /home/michels/temp_detect/
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
