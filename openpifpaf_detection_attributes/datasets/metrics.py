@@ -647,7 +647,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 print(preds)
                 print(gt.attributes["is_crossing"])
                 if not (gt.attributes["is_crossing"] == 0 or gt.attributes["is_crossing"] == 1):
-                    print("THIS IS NOT NORMAL") 
+                    1/0
                 sys.stdout.flush()
                 
                 self.cros_stats['pred'].append(pred)
