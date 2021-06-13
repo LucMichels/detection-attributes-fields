@@ -45,8 +45,8 @@ SECONDS=0
 
 checkpoint='/home/michels/results/taylor/scale/checkpoints/model.pt.epoch254'
 # checkpoint=resnet50
-cd /home/michels/detection-attributes-fields/
-# cd /home/michels/temp_detect/
+# cd /home/michels/detection-attributes-fields/
+cd /home/michels/temp_detect/
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
