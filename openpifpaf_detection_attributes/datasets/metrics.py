@@ -509,11 +509,12 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         max_iou = iou
                         match = gt
                 
-                print(max_iou, "max iou", pred.attributes['center'], pred.attributes['width'],
-                                          pred.attributes['height'],
-                                          match.attributes['center'], gt.attributes['width'],
-                                          match.attributes['height'])
-                sys.stdout.flush()
+                if match is not None:
+                    print(max_iou, "max iou", pred.attributes['center'], pred.attributes['width'],
+                                              pred.attributes['height'],
+                                              match.attributes['center'], gt.attributes['width'],
+                                              match.attributes['height'])
+                    sys.stdout.flush()  
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
