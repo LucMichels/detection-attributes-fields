@@ -515,7 +515,8 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         if not gt_match[match.id]:
                             # check if True positive
                             self.cros_stats[att]['score'].append(pred.attributes['score'])
-                            tp = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) == gt.attribute[att]
+                            tp = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) == gt.attribute[att] and gt.attribute[att] == 1
+                            tp = int(tp)
                             self.cros_stats[att]['tp'].append(tp)
                             self.cros_stats[att]['fp'].append(1-tp)
 
@@ -687,6 +688,9 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         ap = 0
         for att in ["is_crossing", "is_not_crossing"]:
             ap += (compute_ap(self.cros_stats[att]) * 0.5)
+            print(compute_ap(self.cros_stats[att]) * 0.5)
+            print(self.cros_stats[att])
+            sys.stdout.flush()
 
         text_labels.append('will_cross_AP')
         stats.append(ap)
