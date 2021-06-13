@@ -474,7 +474,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
     def accumulate_attribute(self, predictions, image_meta, *,
                              ground_truth=None):
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
-
+        duplicates = 0
         for att in ["is_crossing", "is_not_crossing"]:
             # Initialize ground truths
             
@@ -525,6 +525,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
                         else:
+                            duplicates+=1
                             # False positive (multiple detections)
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
@@ -538,6 +539,8 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                     self.cros_stats[att]['score'].append(pred.attributes['confidence'])
                     self.cros_stats[att]['tp'].append(0)
                     self.cros_stats[att]['fp'].append(1)     
+        print("hello duplicate", duplicates)
+        sys.stdout.flush()
 
 
     def stats(self):
