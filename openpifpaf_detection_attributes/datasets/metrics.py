@@ -482,7 +482,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
             for gt in ground_truth:
                 gt_match[gt.id] = False
 
-            self.cros_stats[att]['n_gt'] = len(ground_truth)
+            self.cros_stats[att]['n_gt'] += len(ground_truth)
 
             # Rank predictions based on confidences
             ranked_preds = predictions.sorted(key=lambda x:x.attributes['score'], reverse=True)
@@ -614,7 +614,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
 
         for att in ["is_crossing", "is_not_crossing"]:
-            self.cros_stats[att]['n_gt'] = len(ground_truth)
+            self.cros_stats[att]['n_gt'] += len(ground_truth)
             # Match groud truths with closest predictions 
             for gt in ground_truth:
 
