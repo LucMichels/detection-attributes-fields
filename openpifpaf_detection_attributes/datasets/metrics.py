@@ -510,12 +510,12 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
-                    if ((match.attributes[attribute_meta.attribute] is not None)
+                    if ((match.attributes[att] is not None)
                     ):
                         if not gt_match[match.id]:
                             
                             # check if True positive
-                            preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
+                            preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
                             tp = argmax() == gt.attribute[att] and gt.attribute[att] == 1
                             tp = int(tp)
                             self.cros_stats[att]['tp'].append(tp)
