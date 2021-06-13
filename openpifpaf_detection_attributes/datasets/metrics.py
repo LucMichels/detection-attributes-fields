@@ -640,13 +640,12 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 # Add predictions
                 if match is not None:
                     
+
                     # get prediction
                     preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
                     pred = argmax(preds) 
-
-                    if att == "is_crossing":
-                        print(preds, gt.attributes[att], att)
-                        sys.stdout.flush()
+                    score = softmax(preds/sum(preds))[1] if att == "is_crossing" else softmax(preds/sum(preds))[0]
+                    self.cros_stats[att]['score'].append(score)
 
                     truth = gt.attributes[att]
                     self.cros_stats[att]['pred'].append(pred)
