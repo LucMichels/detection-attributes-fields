@@ -528,7 +528,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
                         else:
-                            duplicates+=1
+                            #duplicates+=1
                             # False positive (multiple detections)
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
