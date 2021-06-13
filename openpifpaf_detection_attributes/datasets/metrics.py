@@ -504,13 +504,13 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                     else:
                         iou = 0.
-                    if (iou > 0.5) and (iou >= max_iou):
+                    if (iou > 0.) and (iou >= max_iou):
 
                         max_iou = iou
                         match = gt
-                    else:
-                        print(iou)
-                        sys.stdout.flush()
+                
+                print(max_iou, "max iou")
+                sys.stdout.flush()
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
