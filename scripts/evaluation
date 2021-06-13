@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:40:00 # 3:10:0
+#SBATCH --time=00:15:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -138,26 +138,6 @@ attributes="detection will_cross"
 mkdir -p ${xpdir}/predictions
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_${evalepoch} \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${checkpoint} \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --fork-normalization-operation ${mtlgradmerge} \
-  --fork-normalization-duplicates ${duplicates} \
-  --head-consolidation 'filter_and_extend' \
-  --decoder-s-threshold ${sthreshold} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
-  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-echo "Evaluation done!"
-
-srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
@@ -178,26 +158,26 @@ srun time python3 -m openpifpaf.eval \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_inf_${evalepoch} \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${checkpoint} \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --fork-normalization-operation ${mtlgradmerge} \
-  --fork-normalization-duplicates ${duplicates} \
-  --head-consolidation 'filter_and_extend' \
-  --decoder-s-threshold ${sthreshold} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
-  --jaad-slice 0 9999 \
-  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-echo "Evaluation done!"
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_slice_inf_${evalepoch} \
+#   --dataset ${dataset} \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${checkpoint} \
+#   --batch-size 4 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --fork-normalization-operation ${mtlgradmerge} \
+#   --fork-normalization-duplicates ${duplicates} \
+#   --head-consolidation 'filter_and_extend' \
+#   --decoder-s-threshold ${sthreshold} \
+#   --decoder-optics-min-cluster-size ${minclustersize} \
+#   --decoder-optics-epsilon ${epsilon} \
+#   --decoder-optics-cluster-threshold ${clusterthreshold} \
+#   --jaad-slice 0 9999 \
+#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+# echo "Evaluation done!"
 
 
 
