@@ -127,13 +127,14 @@ mkdir -p ${xpdir}/checkpoints
 #   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 # echo "Evaluation done!"
 
-
+mtlgradmerge='power'
 dataset='jaad'
 sthreshold=0.2
 minclustersize=10
 epsilon=5.0
 clusterthreshold=0.5
 evalepoch=5
+attributes="will_cross"
 mkdir -p ${xpdir}/predictions
 
 srun time python3 -m openpifpaf.eval \
