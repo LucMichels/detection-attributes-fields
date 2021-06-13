@@ -658,11 +658,11 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
                 else:
                     # Default to predicting not crossing
-                    pred = 0
+                    pred = 0 if att == "is_crossing": else 1
                     self.cros_stats[att]['score'].append(0.0)
                     self.cros_stats[att]['pred'].append(pred)
                     self.cros_stats[att]['true'].append(gt.attributes[att])      
-
+                    truth = gt.attributes[att]
                     tp = pred == truth
                     self.cros_stats[att]['tp'].append(tp)
                     self.cros_stats[att]['fp'].append(1-tp)     
