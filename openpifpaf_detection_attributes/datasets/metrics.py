@@ -587,7 +587,8 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
         assert len(self.attribute_metas) == 2 # only valid classification attributes (is_crossing and is_not_crossing) are allowed
 
-        self.cros_stats = {
+        for att in ["is_crossing", "is_not_crossing"]:
+            self.cros_stats[att] = {
                 'n_gt': 0, 'score': [], 'pred': [], 'true': [], 'tp': [], 'fp': []
                 }
         self.predictions = {}
