@@ -688,9 +688,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         ap = 0
         for att in ["is_crossing", "is_not_crossing"]:
             ap += (compute_ap(self.cros_stats[att]) * 0.5)
-            print(compute_ap(self.cros_stats[att]) * 0.5)
-            print(self.cros_stats[att])
-            sys.stdout.flush()
 
         text_labels.append('will_cross_AP')
         stats.append(ap)
