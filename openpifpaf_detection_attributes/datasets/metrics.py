@@ -516,7 +516,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                             
                             # check if True positive
                             preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
-                            tp = argmax(preds) == gt.attribute[att] and gt.attribute[att] == 1
+                            tp = argmax(preds) == gt.attributes[att] and gt.attributes[att] == 1
                             tp = int(tp)
                             self.cros_stats[att]['tp'].append(tp)
                             self.cros_stats[att]['fp'].append(1-tp)
