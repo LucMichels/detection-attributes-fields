@@ -296,11 +296,8 @@ class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         # rescale bbox so its fit fields
         #bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
 
-        print()
-        print(bbox)
+
         bbox = np.round(bbox).astype(np.int)
-        print(bbox)
-        sys.stdout.flush()
         w = max(1, bbox[2])
         h = max(1, bbox[3])
         x = bbox[0] 

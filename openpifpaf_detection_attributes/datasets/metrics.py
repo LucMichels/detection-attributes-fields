@@ -644,8 +644,9 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
                     pred = argmax(preds) 
 
-                    print(preds, gt.attributes[att], att)
-                    sys.stdout.flush()
+                    if att == "is_crossing":
+                        print(preds, gt.attributes[att], att)
+                        sys.stdout.flush()
 
                     truth = gt.attributes[att]
                     self.cros_stats[att]['pred'].append(pred)
