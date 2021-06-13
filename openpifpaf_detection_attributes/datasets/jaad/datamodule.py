@@ -289,4 +289,4 @@ class Jaad(openpifpaf.datasets.DataModule):
 
 
     def metrics(self):
-        return [eval_metrics.ClassificationHazik(self.head_metas)] # eval_metrics.InstanceDetection(self.head_metas),
+        return [eval_metrics.InstanceHazikDetection(self.head_metas), eval_metrics.ClassificationHazik(self.head_metas)] # 
