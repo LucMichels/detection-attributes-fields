@@ -40,6 +40,7 @@ epochs=254
 attributes='hazik'
 duplicates=2
 lambdas="0.2 0.2 30 2 2 50 3 3"
+lambdas="0.2 0.2 1 1"
 
 SECONDS=0
 
@@ -81,10 +82,12 @@ srun time python3 -m openpifpaf.train \
   --attribute-regression-loss l2 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
-  --component-lambdas ${lambdas} \
+  --lambdas ${lambdas} \
   --jaad-invert 99999 \
   2>&1 | tee ${xpdir}/logs/train_log.txt
 echo "Training done!"
+
+# component-
 
 # for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 # do
