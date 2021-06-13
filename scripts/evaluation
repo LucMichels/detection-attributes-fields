@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:15:00 # 3:10:0
+#SBATCH --time=00:00:30 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -43,7 +43,7 @@ lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint='/home/michels/results/taylor/scale/checkpoints/model.pt.epoch254'
+checkpoint='/home/michels/results/taylor/all_train/checkpoints/model.pt.epoch005'
 # checkpoint=resnet50
 # cd /home/michels/detection-attributes-fields/
 cd /home/michels/temp_detect/
@@ -110,22 +110,52 @@ mkdir -p ${xpdir}/checkpoints
 # done
 
 
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
+#   --dataset jaad \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${checkpoint} \
+#   --batch-size 6 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation=keep \
+#   --force-complete-pose --seed-threshold=0.2 \
+#   --jaad-invert 120 \
+#   --jaad-truncate \
+#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+# echo "Evaluation done!"
+
+
+dataset='jaad'
+sthreshold=0.2
+minclustersize=10
+epsilon=5.0
+clusterthreshold=0.5
+evalepoch=5
+mkdir -p ${xpdir}/predictions
+
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
-  --dataset jaad \
+  --output ${xpdir}/predictions/model_${evalepoch} \
+  --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
   --checkpoint ${checkpoint} \
-  --batch-size 6 \
+  --batch-size 4 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation=keep \
-  --force-complete-pose --seed-threshold=0.2 \
-  --jaad-invert 120 \
-  --jaad-truncate \
+  --fork-normalization-operation ${mtlgradmerge} \
+  --fork-normalization-duplicates ${duplicates} \
+  --head-consolidation 'filter_and_extend' \
+  --decoder-s-threshold ${sthreshold} \
+  --decoder-optics-min-cluster-size ${minclustersize} \
+  --decoder-optics-epsilon ${epsilon} \
+  --decoder-optics-cluster-threshold ${clusterthreshold} \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
+
 
 
 cd -
