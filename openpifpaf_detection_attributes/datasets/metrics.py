@@ -343,11 +343,42 @@ class Classification(openpifpaf.metric.base.Base):
                     ):
                         det_stats['n_gt'] += 1
 
+            # Rank predictions based on confidences
+            ranked_preds = []
+            for pred in predictions:
+                if (
+                    (attribute_meta.attribute in pred.attributes)
+                    and (pred.attributes[attribute_meta.attribute] is not None)
+                ):
+                    rpred = copy.deepcopy(pred)
+                    pred_score = pred.attributes[attribute_meta.attribute]
+                    pred_conf = pred.attributes['confidence']
+                    if (
+                        (attribute_meta.attribute == 'confidence')
+                        or (not attribute_meta.is_classification)
+                    ):
+                        rpred.attributes['score'] = pred_conf
+                    elif (
+                        attribute_meta.is_classification
+                        and (attribute_meta.n_channels == 1)
+                    ):
+                        rpred.attributes['score'] = (
+                            (cls*pred_score + (1-cls)*(1.-pred_score))
+                            * pred_conf
+                        )
+                    elif (
+                        attribute_meta.is_classification
+                        and (attribute_meta.n_channels > 1)
+                    ):
+                        rpred.attributes['score'] = pred_score[cls] * pred_conf
+                    ranked_preds.append(rpred)
+            ranked_preds.sort(key=lambda x:x.attributes['score'], reverse=True)
+
             # Match ground truths with closest predictions
             for gt in ground_truth:
                 max_iou = -1.
                 match = None
-                for pred in predictions:
+                for pred in ranked_preds:
                     if (
                         ('width' in pred.attributes)
                         and ('height' in pred.attributes)
