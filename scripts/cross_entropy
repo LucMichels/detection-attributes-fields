@@ -37,7 +37,7 @@ COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=1e-5
 epochs=254
-attributes='crossing will_cross'
+attributes='is_crossing will_cross'
 duplicates=2
 lambdas="1 1 1 1"
 
