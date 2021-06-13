@@ -70,7 +70,7 @@ srun time python3 -m openpifpaf.train \
   --auto-tune-mtl \
   --jaad-use-hazik-augmentation \
   --jaad-top-crop-ratio 0.3 \
-  --log-interval 10 \
+  --log-interval 11 \
   --val-interval 1 \
   --val-batches 1 \
   --epochs ${epochs} \
