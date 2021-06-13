@@ -509,7 +509,10 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         max_iou = iou
                         match = gt
                 
-                print(max_iou, "max iou")
+                print(max_iou, "max iou", pred.attributes['center'], pred.attributes['width'],
+                                          pred.attributes['height'],
+                                          gt.attributes['center'], gt.attributes['width'],
+                                          gt.attributes['height'])
                 sys.stdout.flush()
 
                 # Classify predictions as True Positives or False Positives
@@ -663,7 +666,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     self.cros_stats[att]['score'].append(score)
 
                     truth = gt.attributes[att]
-                    self.cros_stats[att]['pred'].append(pred)
+                    self.cros_stats[att]['pred'].append(p)
                     self.cros_stats[att]['true'].append(truth) 
 
                     tp = int(p == truth and truth == 1)
@@ -674,7 +677,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     # Default to predicting not crossing
                     p = 0 if att == "is_crossing" else 1
                     self.cros_stats[att]['score'].append(0.0)
-                    self.cros_stats[att]['pred'].append(pred)
+                    self.cros_stats[att]['pred'].append(p)
                     self.cros_stats[att]['true'].append(gt.attributes[att])      
                     truth = gt.attributes[att]
                     tp = int(p == truth and truth == 1)
