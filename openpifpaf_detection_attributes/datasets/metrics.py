@@ -485,7 +485,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
             self.cros_stats[att]['n_gt'] += len(ground_truth)
 
             # Rank predictions based on confidences
-            ranked_preds = predictions.sorted(key=lambda x:x.attributes['score'], reverse=True)
+            ranked_preds = sorted(predictions, key=lambda x:x.attributes['score'], reverse=True)
 
             # Match predictions with closest groud truths
             for pred in ranked_preds:
