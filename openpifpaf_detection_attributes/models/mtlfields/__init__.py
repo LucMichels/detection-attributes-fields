@@ -1,7 +1,7 @@
 import openpifpaf
 
 from .basenetwork import ForkNormNetwork
-from .decoder import InstanceDecoder, InstanceHazikCIFCAFDecoder #, InstanceCIFCAFDecoder
+from .decoder import InstanceDecoder, InstanceHazikCIFCAFDecoder , InstanceCIFCAFDecoder
 from .head import AttributeField
 from .loss import AttributeLoss
 from ...datasets import headmeta
@@ -18,7 +18,7 @@ def register():
     openpifpaf.BASE_FACTORIES['fn-shufflenetv2k30'] = lambda: ForkNormNetwork(
         'fn-shufflenetv2k30', 'shufflenetv2k30')
     openpifpaf.HEADS[headmeta.AttributeMeta] = AttributeField
-    openpifpaf.DECODERS.add(InstanceDecoder)
-    #openpifpaf.DECODERS.add(InstanceCIFCAFDecoder)
+    #openpifpaf.DECODERS.add(InstanceDecoder)
+    openpifpaf.DECODERS.add(InstanceCIFCAFDecoder)
     #openpifpaf.DECODERS.add(InstanceHazikCIFCAFDecoder)
     openpifpaf.LOSSES[headmeta.AttributeMeta] = AttributeLoss
