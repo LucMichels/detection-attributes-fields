@@ -477,8 +477,8 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
         for att in ["is_crossing", "is_not_crossing"]:
             # Initialize ground truths
-            duplicates = 0
-            missed = 0
+            #duplicates = 0
+            #missed = 0
             gt_match = {}
             for gt in ground_truth:
                 gt_match[gt.id] = False
@@ -504,7 +504,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                     else:
                         iou = 0.
-                    if (iou > 0.2) and (iou >= max_iou):
+                    if (iou > 0.5) and (iou >= max_iou):
 
                         max_iou = iou
                         match = gt
@@ -538,15 +538,15 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         # Ignore instance
                         pass
                 else:
-                    missed+=1
+                    #missed+=1
                     # False positive
                     self.cros_stats[att]['score'].append(pred.attributes['confidence'])
                     self.cros_stats[att]['tp'].append(0)
                     self.cros_stats[att]['fp'].append(1)     
-            print("hello duplicate", duplicates)
-            print("hello missed", missed)
-            print("hello total", len(ground_truth))
-            sys.stdout.flush()
+            # print("hello duplicate", duplicates)
+            # print("hello missed", missed)
+            # print("hello total", len(ground_truth))
+            # sys.stdout.flush()
 
 
     def stats(self):
