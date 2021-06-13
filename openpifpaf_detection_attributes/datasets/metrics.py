@@ -508,6 +508,9 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
                         max_iou = iou
                         match = gt
+                    else:
+                        print(iou)
+                        sys.stdout.flush()
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
