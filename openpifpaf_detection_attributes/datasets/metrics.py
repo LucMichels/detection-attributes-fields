@@ -485,7 +485,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
             self.cros_stats[att]['n_gt'] += len(ground_truth)
 
             # Rank predictions based on confidences
-            ranked_preds = sorted(predictions, key=lambda x:x.attributes['score'], reverse=True)
+            ranked_preds = sorted(predictions, key=lambda x:x.attributes['confidence'], reverse=True)
 
             # Match predictions with closest groud truths
             for pred in ranked_preds:
@@ -513,17 +513,21 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                     if ((match.attributes[attribute_meta.attribute] is not None)
                     ):
                         if not gt_match[match.id]:
+                            
                             # check if True positive
-                            self.cros_stats[att]['score'].append(pred.attributes['score'])
-                            tp = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) == gt.attribute[att] and gt.attribute[att] == 1
+                            preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
+                            tp = argmax() == gt.attribute[att] and gt.attribute[att] == 1
                             tp = int(tp)
                             self.cros_stats[att]['tp'].append(tp)
                             self.cros_stats[att]['fp'].append(1-tp)
 
                             gt_match[match.id] = True
+                            score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
+                            self.cros_stats[att]['score'].append(score)
                         else:
                             # False positive (multiple detections)
-                            self.cros_stats[att]['score'].append(pred.attributes['score'])
+                            score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
+                            self.cros_stats[att]['score'].append(score)
                             self.cros_stats[att]['tp'].append(0)
                             self.cros_stats[att]['fp'].append(1)
                     else:
@@ -531,7 +535,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         pass
                 else:
                     # False positive
-                    self.cros_stats[att]['score'].append(pred.attributes['score'])
+                    self.cros_stats[att]['score'].append(pred.attributes['confidence'])
                     self.cros_stats[att]['tp'].append(0)
                     self.cros_stats[att]['fp'].append(1)     
 
