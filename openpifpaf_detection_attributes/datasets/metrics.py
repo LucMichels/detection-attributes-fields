@@ -374,7 +374,6 @@ class Classification(openpifpaf.metric.base.Base):
                         (not gt.ignore_eval)
                         and (gt.attributes[attribute_meta.attribute] is not None)
                     ):
-                        
                         # True positive
                         det_stats['score'].append(match.attributes['score'])
                         det_stats['tp'].append(1)
@@ -645,7 +644,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                     preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
                     pred = argmax(preds) 
                     score = softmax(preds/sum(preds))[1] if att == "is_crossing" else softmax(preds/sum(preds))[0]
-                    score = match.attributes["score"]
+                    score = match.attributes["confidence"]
                     self.cros_stats[att]['score'].append(score)
 
                     truth = gt.attributes[att]
