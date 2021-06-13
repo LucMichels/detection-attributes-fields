@@ -92,11 +92,9 @@ def average_precision(rec, prec):
         ap += ((mrec[i]-mrec[i-1])*mpre[i])
     return ap
 
-
 class InstanceDetection(openpifpaf.metric.base.Base):
     """Compute detection metrics from all detected instances for a list of
         attributes.
-
     Args:
         attribute_metas (List[AttributeMeta]): list of meta information about
             attributes.
@@ -112,8 +110,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         for att_meta in self.attribute_metas:
             if att_meta.is_classification:
                 n_classes = max(att_meta.n_channels, 2)
-                if att_meta.group == "hazik":
-                    n_classes = 1
             else:
                 n_classes = 10
             self.det_stats[att_meta.attribute] = {'n_classes': n_classes}
@@ -126,7 +122,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
         # Store predictions for writing to file
         pred_data = []
-        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
         for pred in predictions:
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
@@ -157,6 +152,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (gt.attributes[attribute_meta.attribute] is not None)
                     ):
                         det_stats['n_gt'] += 1
+
             # Rank predictions based on confidences
             ranked_preds = []
             for pred in predictions:
@@ -193,7 +189,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 max_iou = -1.
                 match = None
                 for gt in ground_truth:
-
                     if (
                         (gt.id in gt_match)
                         and ('width' in pred.attributes)
@@ -202,21 +197,18 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
                                           pred.attributes['height'],
                                           gt.attributes['center'], gt.attributes['width'],
-                                          gt.attributes['height'])    
+                                          gt.attributes['height'])
                     else:
                         iou = 0.
-
                     if (iou > 0.5) and (iou >= max_iou):
                         if (
                             (gt.attributes[attribute_meta.attribute] is None)
                             or attribute_meta.is_classification
-                            or attribute_meta.group == 'hazik'
                             or (abs(gt.attributes[attribute_meta.attribute]
                                 -pred.attributes[attribute_meta.attribute]) <= (cls+1)*.5)
                         ):
                             max_iou = iou
                             match = gt
-
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
@@ -225,27 +217,10 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (match.attributes[attribute_meta.attribute] is not None)
                     ):
                         if not gt_match[match.id]:
-
-                            if attribute_meta.group == 'hazik':
-                                preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
-                                prediction = argmax(preds) 
-                                sm = softmax(preds/sum(preds))
-                                # print(sm, "other metric")
-
-                                tp = prediction == int(match.attributes[attribute_meta.attribute])
-                                det_stats['tp'].append(tp)
-                                det_stats['fp'].append(1-tp)
-
-                                if attribute_meta.attribute == 'is_not_crossing_reg':
-                                    det_stats['score'].append(sm[0])
-                                else:
-                                    det_stats['score'].append(sm[1])
-
-                            else:
-                                # True positive
-                                det_stats['score'].append(pred.attributes['score'])
-                                det_stats['tp'].append(1)
-                                det_stats['fp'].append(0)
+                            # True positive
+                            det_stats['score'].append(pred.attributes['score'])
+                            det_stats['tp'].append(1)
+                            det_stats['fp'].append(0)
 
                             gt_match[match.id] = True
                         else:
@@ -268,8 +243,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
         stats = []
 
         att_aps = []
-        hazik_aps = []
-
         for att_meta in self.attribute_metas:
             cls_aps = []
             for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
@@ -280,30 +253,303 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                 stats.append(cls_aps[1])
                 att_aps.append(cls_aps[1])
                 LOG.info('detection AP = {}'.format(cls_aps[1]*100))
-            elif att_meta.group == 'hazik':
-                hazik_aps.append(compute_ap(self.det_stats[att_meta.attribute][cls]))
             else:
                 text_labels.append(att_meta.attribute + '_AP')
                 att_ap = sum(cls_aps) / len(cls_aps)
-
                 stats.append(att_ap)
-
                 att_aps.append(att_ap)
-
                 LOG.info('{} AP = {}'.format(att_meta.attribute, att_ap*100))
-
-        if len(hazik_aps) > 0:
-            text_labels.append('hazik_crossing_AP')
-            hazik_ap = sum(hazik_aps) / len(hazik_aps)
-            stats.append(hazik_ap)
-            att_aps.append(hazik_ap)
-            LOG.info('{} AP = {}'.format('hazik crossing', hazik_ap*100))
-
         text_labels.append('attribute_mAP')
         map = sum(att_aps) / len(att_aps)
         stats.append(map)
         LOG.info('attribute mAP = {}'.format(map*100))
-        
+
+        data = {
+            'text_labels': text_labels,
+            'stats': stats,
+        }
+        return data
+
+
+    def write_predictions(self, filename, *, additional_data=None):
+        with open(filename + '.pred.json', 'w') as f:
+            json.dump(self.predictions, f)
+        LOG.info('wrote %s.pred.json', filename)
+        with zipfile.ZipFile(filename + '.zip', 'w') as myzip:
+            myzip.write(filename + '.pred.json', arcname='predictions.json')
+        LOG.info('wrote %s.zip', filename)
+
+        if additional_data:
+            with open(filename + '.pred_meta.json', 'w') as f:
+                json.dump(additional_data, f)
+            LOG.info('wrote %s.pred_meta.json', filename)
+
+class Classification(openpifpaf.metric.base.Base):
+    """Compute detection metrics from all detected instances for a list of
+        attributes.
+    Args:
+        attribute_metas (List[AttributeMeta]): list of meta information about
+            attributes.
+    """
+
+    def __init__(self, attribute_metas: List[AttributeMeta]):
+        self.attribute_metas = [am for am in attribute_metas
+                                if ((am.attribute == 'confidence')
+                                    or (am.group != 'detection'))]
+        assert len(self.attribute_metas) > 0
+
+        self.det_stats = {}
+        for att_meta in self.attribute_metas:
+            if att_meta.is_classification:
+                n_classes = max(att_meta.n_channels, 2)
+            else:
+                n_classes = 10
+            self.det_stats[att_meta.attribute] = {'n_classes': n_classes}
+            for cls in range(n_classes):
+                self.det_stats[att_meta.attribute][cls] = {
+                    'n_gt': 0, 'score': [], 'tp': [], 'fp': []}
+        self.predictions = {}
+
+
+    def accumulate(self, predictions, image_meta, *, ground_truth=None):
+        # Store predictions for writing to file
+        pred_data = []
+        for pred in predictions:
+            pred_data.append(pred.json_data())
+        self.predictions[image_meta['image_id']] = pred_data
+
+        # Compute metrics
+        for att_meta in self.attribute_metas:
+            self.accumulate_attribute(att_meta, predictions, image_meta,
+                                      ground_truth=ground_truth)
+
+
+    def accumulate_attribute(self, attribute_meta, predictions, image_meta, *,
+                             ground_truth=None):
+        for cls in range(self.det_stats[attribute_meta.attribute]['n_classes']):
+            det_stats = self.det_stats[attribute_meta.attribute][cls]
+
+            # Initialize ground truths
+            for gt in ground_truth:
+                if (
+                    gt.ignore_eval
+                    or (gt.attributes[attribute_meta.attribute] is None)
+                    or (not attribute_meta.is_classification)
+                    or (int(gt.attributes[attribute_meta.attribute]) == cls)
+                ):
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[attribute_meta.attribute] is not None)
+                    ):
+                        det_stats['n_gt'] += 1
+
+            # Match ground truths with closest predictions
+            for gt in ground_truth:
+                max_iou = -1.
+                match = None
+                for pred in predictions:
+                    if (
+                        ('width' in pred.attributes)
+                        and ('height' in pred.attributes)
+                    ):
+                        iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
+                                          pred.attributes['height'],
+                                          gt.attributes['center'], gt.attributes['width'],
+                                          gt.attributes['height'])
+                    else:
+                        iou = 0.
+                    if (iou > 0.0) and (iou >= max_iou):
+                        if (
+                            (gt.attributes[attribute_meta.attribute] is None)
+                            or attribute_meta.is_classification
+                            or (abs(gt.attributes[attribute_meta.attribute]
+                                -pred.attributes[attribute_meta.attribute]) <= (cls+1)*.5)
+                        ):
+                            max_iou = iou
+                            match = pred
+
+                # Classify predictions as True Positives or False Positives
+                if match is not None:
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[attribute_meta.attribute] is not None)
+                    ):
+                        
+                        # True positive
+                        det_stats['score'].append(match.attributes['score'])
+                        det_stats['tp'].append(1)
+                        det_stats['fp'].append(0)
+
+                    else:
+                        # Ignore instance
+                        pass
+                else:
+                    # False positive
+                    det_stats['score'].append(0)
+                    det_stats['tp'].append(0)
+                    det_stats['fp'].append(1)
+
+
+    def stats(self):
+        text_labels = []
+        stats = []
+
+        att_aps = []
+        for att_meta in self.attribute_metas:
+            cls_aps = []
+            for cls in range(self.det_stats[att_meta.attribute]['n_classes']):
+                cls_ap = compute_ap(self.det_stats[att_meta.attribute][cls])
+                cls_aps.append(cls_ap)
+            if att_meta.attribute == 'confidence':
+                text_labels.append('detection_AP')
+                stats.append(cls_aps[1])
+                att_aps.append(cls_aps[1])
+                LOG.info('detection AP = {}'.format(cls_aps[1]*100))
+            else:
+                text_labels.append(att_meta.attribute + '_AP')
+                att_ap = sum(cls_aps) / len(cls_aps)
+                stats.append(att_ap)
+                att_aps.append(att_ap)
+                LOG.info('{} AP = {}'.format(att_meta.attribute, att_ap*100))
+        text_labels.append('attribute_mAP')
+        map = sum(att_aps) / len(att_aps)
+        stats.append(map)
+        LOG.info('attribute mAP = {}'.format(map*100))
+
+        data = {
+            'text_labels': text_labels,
+            'stats': stats,
+        }
+        return data
+
+
+    def write_predictions(self, filename, *, additional_data=None):
+        with open(filename + '.pred.json', 'w') as f:
+            json.dump(self.predictions, f)
+        LOG.info('wrote %s.pred.json', filename)
+        with zipfile.ZipFile(filename + '.zip', 'w') as myzip:
+            myzip.write(filename + '.pred.json', arcname='predictions.json')
+        LOG.info('wrote %s.zip', filename)
+
+        if additional_data:
+            with open(filename + '.pred_meta.json', 'w') as f:
+                json.dump(additional_data, f)
+            LOG.info('wrote %s.pred_meta.json', filename)
+
+
+class InstanceHazikDetection(openpifpaf.metric.base.Base):
+    """Compute classification metrics from all ground truth instances one channel classification attributes
+
+    Args:
+        attribute_metas (List[AttributeMeta]): list of meta information about
+            attributes.
+    """
+
+    def __init__(self, attribute_metas: List[AttributeMeta]):
+        self.attribute_metas = [am for am in attribute_metas
+                                if ((am.attribute == "is_crossing_reg")
+                                or (am.attribute == "is_not_crossing_reg"))]
+
+        assert len(self.attribute_metas) == 2 # only valid classification attributes (is_crossing and is_not_crossing) are allowed
+
+        self.cros_stats = {
+                'n_gt': 0, 'score': [], 'tp': [], 'fp': []
+                }
+        self.predictions = {}
+
+
+    def accumulate(self, predictions, image_meta, *, ground_truth=None):
+        # Store predictions for writing to file
+        pred_data = []
+        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
+        for pred in predictions:
+            pred_data.append(pred.json_data())
+        self.predictions[image_meta['image_id']] = pred_data
+
+        # Compute metrics
+        self.accumulate_attribute(predictions, image_meta,
+                                    ground_truth=ground_truth)
+
+
+    def accumulate_attribute(self, predictions, image_meta, *,
+                             ground_truth=None):
+
+        # Initialize ground truths
+        ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
+        gt_match = {}
+        for gt in ground_truth:
+            gt_match[gt.id] = False
+
+        self.cros_stats['n_gt'] = len(ground_truth)
+
+        # Rank predictions based on confidences
+        ranked_preds = predictions.sorted(key=lambda x:x.attributes['score'], reverse=True)
+
+        # Match predictions with closest groud truths
+        for pred in ranked_preds:
+            max_iou = -1.
+            match = None
+            for gt in ground_truth:
+                if (
+                    (gt.id in gt_match)
+                    and ('width' in pred.attributes)
+                    and ('height' in pred.attributes)
+                ):
+                    iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
+                                      pred.attributes['height'],
+                                      gt.attributes['center'], gt.attributes['width'],
+                                      gt.attributes['height'])
+                else:
+                    iou = 0.
+                if (iou > 0.5) and (iou >= max_iou):
+                    if (
+                        (gt.attributes[attribute_meta.attribute] is None)
+                        or attribute_meta.is_classification
+                        or (abs(gt.attributes[attribute_meta.attribute]
+                            -pred.attributes[attribute_meta.attribute]) <= (cls+1)*.5)
+                    ):
+                        max_iou = iou
+                        match = gt
+
+            # Classify predictions as True Positives or False Positives
+            if match is not None:
+                if ((match.attributes[attribute_meta.attribute] is not None)
+                ):
+                    if not gt_match[match.id]:
+                        # True positive
+                        det_stats['score'].append(pred.attributes['score'])
+                        det_stats['tp'].append(1)
+                        det_stats['fp'].append(0)
+
+                        gt_match[match.id] = True
+                    else:
+                        # False positive (multiple detections)
+                        det_stats['score'].append(pred.attributes['score'])
+                        det_stats['tp'].append(0)
+                        det_stats['fp'].append(1)
+                else:
+                    # Ignore instance
+                    pass
+            else:
+                # False positive
+                det_stats['score'].append(pred.attributes['score'])
+                det_stats['tp'].append(0)
+                det_stats['fp'].append(1)     
+
+
+    def stats(self):
+        text_labels = []
+        stats = []
+
+        ap = compute_precision(self.cros_stats)
+
+        text_labels.append('will_cross_AP')
+        stats.append(precision)
+
+
+        LOG.info('will cross P = {}'.format(precision*100))
+        LOG.info('will cross R = {}'.format(recall*100))
+
         data = {
             'text_labels': text_labels,
             'stats': stats,
@@ -399,6 +645,9 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 
                 print(softmax(preds/sum(preds)), int(gt.attributes["is_crossing"]))
                 print(preds)
+                print(gt.attributes["is_crossing"])
+                if not (gt.attributes["is_crossing"] == 0 or gt.attributes["is_crossing"] == 1):
+                    print("THIS IS NOT NORMAL") 
                 sys.stdout.flush()
                 
                 self.cros_stats['pred'].append(pred)
