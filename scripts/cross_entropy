@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:10:30 # 3:10:0
+#SBATCH --time=00:00:30 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -37,11 +37,16 @@ COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=1e-5
 epochs=254
-attributes='is_crossing will_cross'
-duplicates=2
-lambdas="1 1 0.0001 0.0001"
+attributes='is_crossing will_cross detection'
+duplicates=6
+lambdas="1 1 1 1 1 1 1 1"
 
 SECONDS=0
+mtlgradmerge='power'
+sthreshold=0.2
+minclustersize=10
+epsilon=5.0
+clusterthreshold=0.5
 
 checkpoint=resnet50
 
@@ -52,38 +57,40 @@ mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
-# srun time python3 -m openpifpaf.train \
-#   --output ${xpdir}/checkpoints/model.pt \
-#   --dataset ${dataset} \
-#   --jaad-root-dir /work/vita/datasets/JAAD/ \
-#   --jaad-subset ${jaadsubset} \
-#   --jaad-training-set ${trainsplit} \
-#   --jaad-validation-set ${evalsplit} \
-#   --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
-#   --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
-#   --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
-#   --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
-#   --cocokp-orientation-invariant 0.1 \
-#   --cocokp-upsample=2 \
-#   --coco-eval-orientation-invariant 0.0 \
-#   --ema 1e-3 \
-#   --auto-tune-mtl \
-#   --jaad-top-crop-ratio 0.3 \
-#   --log-interval 11 \
-#   --val-interval 1 \
-#   --val-batches 1 \
-#   --epochs ${epochs} \
-#   --batch-size 4 \
-#   --lr ${lr} \
-#   --weight-decay 0 \
-#   --momentum 0.95 \
-#   --checkpoint ${checkpoint} \
-#   --attribute-regression-loss l2 \
-#   --jaad-head-upsample 2 \
-#   --jaad-pedestrian-attributes ${attributes} \
-#   --lambdas ${lambdas} \
-#   2>&1 | tee ${xpdir}/logs/train_log.txt
-# echo "Training done!"
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --auto-tune-mtl \
+  --jaad-top-crop-ratio 0.33 \
+  --log-interval 11 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --weight-decay 0 \
+  --momentum 0.95 \
+  --checkpoint ${checkpoint} \
+  --decoder-optics-min-cluster-size ${minclustersize} \
+  --decoder-optics-epsilon ${epsilon} \
+  --decoder-optics-cluster-threshold ${clusterthreshold} \
+  --attribute-regression-loss l2 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
 
 # 
 
@@ -108,12 +115,12 @@ mkdir -p ${xpdir}/checkpoints
 #   echo "Evaluation done!"
 # done
 
-evalfrom=5
+evalfrom=4
 checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
 echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
+  --output ${xpdir}/predictions/model_slice_1_p_${evalepoch} \
   --dataset jaad \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
@@ -124,6 +131,25 @@ srun time python3 -m openpifpaf.eval \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
   --decoder-use-pifpaf-bbox \
+  --jaad-slice 0 30 \
+  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+echo "Evaluation done!"
+
+evalfrom=4
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
+echo "Start evaluating ${evalfrom}..."
+
+srun time python3 -m openpifpaf.eval \
+  --output ${xpdir}/predictions/model_slice_1_d_${evalepoch} \
+  --dataset jaad \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-testing-set ${evalsplit} \
+  --checkpoint ${checkpoint} \
+  --batch-size 4 \
+  --head-consolidation=keep \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
