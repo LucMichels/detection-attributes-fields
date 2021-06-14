@@ -237,6 +237,10 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                     det_stats['score'].append(pred.attributes['score'])
                     det_stats['tp'].append(0)
                     det_stats['fp'].append(1)
+            print("precision", np.sum(det_stats['tp']) / np.sum(det_stats['fp'] + det_stats['fp']))
+            print("recall", np.sum(det_stats['tp']) / det_stats["n_gt"])
+            print(attribute_meta.attribute)
+            sys.stdout.flush()
 
 
     def stats(self):
