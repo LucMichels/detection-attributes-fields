@@ -321,14 +321,12 @@ class Classification(openpifpaf.metric.base.Base):
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
 
-        if len(predictions) > 0:  
-            # Compute metrics
-            for att_meta in self.attribute_metas:
-                self.accumulate_attribute(att_meta, predictions, image_meta,
-                                          ground_truth=ground_truth)
-        else:
-            print("Ah okay")
-            sys.stdout.flush()
+
+        # Compute metrics
+        for att_meta in self.attribute_metas:
+            self.accumulate_attribute(att_meta, predictions, image_meta,
+                                      ground_truth=ground_truth)
+
 
 
 
