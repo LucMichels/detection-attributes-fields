@@ -128,7 +128,7 @@ srun time python3 -m openpifpaf.eval \
   --batch-size 4 \
   --head-consolidation=keep \
   --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
+  --jaad-pedestrian-attributes will_cross \
   --decoder-use-pifpaf-bbox \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
@@ -152,7 +152,7 @@ srun time python3 -m openpifpaf.eval \
   --decoder-optics-epsilon 5.0 \
   --decoder-optics-cluster-threshold 0.5 \
   --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
+  --jaad-pedestrian-attributes will_cross \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
