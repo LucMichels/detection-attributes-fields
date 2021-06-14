@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30 # 3:10:0
+#SBATCH --time=07:00:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -75,6 +75,7 @@ srun time python3 -m openpifpaf.train \
   --val-batches 1 \
   --epochs ${epochs} \
   --batch-size 4 \
+  --weight-decay 5e-4 \
   --lr ${lr} \
   --weight-decay 0 \
   --momentum 0.95 \
