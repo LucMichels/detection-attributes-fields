@@ -162,7 +162,7 @@ echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_pifpaf \
-  --checkpoint checkpoint \
+  --checkpoint ${checkpoint} \
   --decoder=cifcaf:0 \
   --dataset=cocokp --force-complete-pose --seed-threshold=0.2 \
   --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
