@@ -114,7 +114,7 @@ echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
-  --dataset jaad-cocokp \
+  --dataset cocokp \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
