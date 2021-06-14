@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:05 # 3:10:0
+#SBATCH --time=00:15:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -114,15 +114,12 @@ echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
-  --dataset jaad \
+  --dataset jaad-cocokp \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
   --checkpoint ${checkpoint} \
   --batch-size 4 \
-  --save-all ${xpdir}/images \
-  --show-final-image \
-  --show-final-ground-truth \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
   --head-consolidation=keep \
