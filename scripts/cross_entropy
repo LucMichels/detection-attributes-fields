@@ -35,7 +35,7 @@ COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.
 COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
-lr=0.00001
+lr=1e-5
 epochs=256
 attributes='is_crossing will_cross detection'
 duplicates=6
@@ -114,9 +114,8 @@ echo "Training done!"
 #   echo "Evaluation done!"
 # done
 
-evalfrom=4
-checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
-echo "Start evaluating ${evalfrom}..."
+evalfrom=6
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch256'
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_p_${evalepoch} \
@@ -134,9 +133,6 @@ srun time python3 -m openpifpaf.eval \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
 
-evalfrom=4
-checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch253'
-echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_d_${evalepoch} \
@@ -152,7 +148,7 @@ srun time python3 -m openpifpaf.eval \
   --decoder-optics-epsilon 5.0 \
   --decoder-optics-cluster-threshold 0.5 \
   --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes will_cross \
+  --jaad-pedestrian-attributes will_cross detection \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
