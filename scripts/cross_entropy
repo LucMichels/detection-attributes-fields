@@ -109,12 +109,12 @@ mkdir -p ${xpdir}/checkpoints
 # done
 
 evalfrom=5
-checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch252'
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch255'
 echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
-  --dataset cocokp \
+  --dataset jaad \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
