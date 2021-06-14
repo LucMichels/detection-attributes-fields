@@ -39,7 +39,7 @@ lr=1e-5
 epochs=254
 attributes='hazik'
 duplicates=2
-lambdas="25 25 0.0001 0.0001"
+lambdas="40 40 0.0001 0.0001"
 
 SECONDS=0
 

@@ -75,7 +75,7 @@ srun time python3 -m openpifpaf.train \
   --epochs ${epochs} \
   --batch-size 4 \
   --lr ${lr} \
-  --weight-decay 0 \
+  --weight-decay 5e-4 \
   --momentum 0.95 \
   --checkpoint ${checkpoint} \
   --attribute-regression-loss l2 \
