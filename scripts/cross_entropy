@@ -35,7 +35,7 @@ COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.
 COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
-lr=1e-5
+lr=0.0005
 epochs=254
 attributes='is_crossing will_cross detection'
 duplicates=6
@@ -79,7 +79,9 @@ srun time python3 -m openpifpaf.train \
   --epochs ${epochs} \
   --batch-size 4 \
   --lr ${lr} \
-  --weight-decay 0 \
+  --weight-decay 5e-4 \
+  --detection-bias-prior 0.01 \
+  --attribute-focal-gamma 2 \
   --momentum 0.95 \
   --checkpoint ${checkpoint} \
   --attribute-regression-loss l2 \
