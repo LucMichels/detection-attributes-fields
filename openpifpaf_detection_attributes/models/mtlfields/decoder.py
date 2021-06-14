@@ -580,8 +580,6 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
         gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
         g  = np.outer(gy, gx)
-        print(np.sum(g))
-        sys.stdout.flush()
         pred = np.sum(g*field)/np.sum(g) if np.sum(g) > 0 else 0
         if np.sum(g) == 0:
             print(w, h, x, y)
