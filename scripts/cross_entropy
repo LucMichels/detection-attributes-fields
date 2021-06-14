@@ -122,13 +122,12 @@ srun time python3 -m openpifpaf.eval \
   --batch-size 4 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation=keep \
   --decoder-use-pifpaf-bbox \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
 
-
+#  --head-consolidation=keep \
 
 cd -
 
