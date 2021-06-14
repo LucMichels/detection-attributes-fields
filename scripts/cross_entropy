@@ -82,9 +82,6 @@ srun time python3 -m openpifpaf.train \
   --weight-decay 0 \
   --momentum 0.95 \
   --checkpoint ${checkpoint} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
   --attribute-regression-loss l2 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
@@ -147,7 +144,9 @@ srun time python3 -m openpifpaf.eval \
   --jaad-testing-set ${evalsplit} \
   --checkpoint ${checkpoint} \
   --batch-size 4 \
-  --head-consolidation=keep \
+  --decoder-optics-min-cluster-size ${minclustersize} \
+  --decoder-optics-epsilon ${epsilon} \
+  --decoder-optics-cluster-threshold ${clusterthreshold} \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
   --jaad-slice 0 30 \
