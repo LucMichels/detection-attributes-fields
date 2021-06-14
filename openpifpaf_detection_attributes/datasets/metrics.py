@@ -238,10 +238,6 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                     det_stats['score'].append(pred.attributes['score'])
                     det_stats['tp'].append(0)
                     det_stats['fp'].append(1)
-            print("precision", np.sum(det_stats['tp']) / np.sum(det_stats['fp'] + det_stats['fp']))
-            print("recall", np.sum(det_stats['tp']) / det_stats["n_gt"])
-            print(attribute_meta.attribute)
-            sys.stdout.flush()
 
 
     def stats(self):
@@ -325,10 +321,15 @@ class Classification(openpifpaf.metric.base.Base):
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
 
-        # Compute metrics
-        for att_meta in self.attribute_metas:
-            self.accumulate_attribute(att_meta, predictions, image_meta,
-                                      ground_truth=ground_truth)
+        if len(predictions) > 0:  
+            # Compute metrics
+            for att_meta in self.attribute_metas:
+                self.accumulate_attribute(att_meta, predictions, image_meta,
+                                          ground_truth=ground_truth)
+        else:
+            print("Ah okay")
+            sys.stdout.flush()
+
 
 
     def accumulate_attribute(self, attribute_meta, predictions, image_meta, *,
