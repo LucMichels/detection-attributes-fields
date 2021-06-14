@@ -115,7 +115,7 @@ mkdir -p ${xpdir}/images
 # done
 
 evalfrom=4
-checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch253'
 echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
@@ -135,7 +135,7 @@ srun time python3 -m openpifpaf.eval \
 echo "Evaluation done!"
 
 evalfrom=4
-checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch253'
 echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
