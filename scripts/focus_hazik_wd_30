@@ -1,0 +1,121 @@
+#!/bin/bash -l
+
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=6
+#SBATCH --mem=16384
+#SBATCH --partition=gpu
+#SBATCH --qos=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --time=00:00:30 # 3:10:0
+#SBATCH --output=/home/michels/results/taylor/s%x.out
+
+module purge
+module load gcc/8.4.0-cuda python/3.7.7
+source /home/michels/venvs/taylor/bin/activate
+
+shopt -s extglob
+
+echo STARTING AT `date`
+pwd
+
+xpdir="/home/michels/results/taylor/${SLURM_JOB_NAME}"
+
+mkdir -p ${xpdir}
+mkdir -p ${xpdir}/logs
+
+# Dataset
+dataset='jaad-cocokp'
+jaadsubset='default'
+trainsplit='train'
+evalsplit='val'
+# COCO
+COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
+COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.json'
+COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
+COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
+# Training
+lr=1e-5
+epochs=254
+attributes='hazik'
+duplicates=2
+lambdas="30 30 0.0001 0.0001"
+
+SECONDS=0
+
+checkpoint=resnet50
+
+# cd /home/michels/detection-attributes-fields/
+cd /home/michels/detection-attributes-fields/
+
+mkdir -p ${xpdir}/predictions
+mkdir -p ${xpdir}/images
+echo "Start training..."
+mkdir -p ${xpdir}/checkpoints
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --ema 1e-3 \
+  --auto-tune-mtl \
+  --jaad-top-crop-ratio 0.3 \
+  --log-interval 11 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --weight-decay 5e-4 \
+  --momentum 0.95 \
+  --checkpoint ${checkpoint} \
+  --attribute-regression-loss l2 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --jaad-invert 99999 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
+
+# 
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 6 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
+    --jaad-invert 120 \
+    --jaad-truncate \
+    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+
+
+cd -
+
+echo FINISHED at `date` 
+
+echo $SECONDS # 5280
+
+deactivate
