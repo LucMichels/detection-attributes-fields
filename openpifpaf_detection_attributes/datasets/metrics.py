@@ -122,6 +122,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
         # Store predictions for writing to file
         pred_data = []
+        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
         for pred in predictions:
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
@@ -314,6 +315,7 @@ class Classification(openpifpaf.metric.base.Base):
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
         # Store predictions for writing to file
         pred_data = []
+        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
         for pred in predictions:
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
