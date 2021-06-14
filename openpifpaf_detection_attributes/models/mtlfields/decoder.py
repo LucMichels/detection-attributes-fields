@@ -576,11 +576,11 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
 
         # activity map for current person
-        y, x = np.arange(field.shape[0]), np.arange(field.shape[1])    
-        gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
-        gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
-        g  = np.outer(gy, gx)
-        pred = np.sum(g*field)/np.sum(g) if np.sum(g) > 0 else 0
+        # y, x = np.arange(field.shape[0]), np.arange(field.shape[1])    
+        # gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
+        # gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
+        # g  = np.outer(gy, gx)
+        # pred = np.sum(g*field)/np.sum(g) if np.sum(g) > 0 else 0
 
         pred = np.sum(field[y:y+h,x:x+w])
         print(pred)
