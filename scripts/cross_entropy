@@ -109,7 +109,7 @@ mkdir -p ${xpdir}/checkpoints
 # done
 
 evalfrom=5
-checkpoint='/home/michels/results/taylor/checkpoints/model.pt.epoch254'
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
 echo "Start evaluating ${evalfrom}..."
 
 srun time python3 -m openpifpaf.eval \
