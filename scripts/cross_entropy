@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:10:30 # 3:10:0
+#SBATCH --time=00:00:30 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -35,8 +35,8 @@ COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.
 COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
 COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
-lr=0.0005
-epochs=254
+lr=0.00001
+epochs=256
 attributes='is_crossing will_cross detection'
 duplicates=6
 lambdas="1 1 1 1 1 1 1 1"
@@ -55,41 +55,41 @@ cd /home/michels/luc_detect/
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
-# echo "Start training..."
-# mkdir -p ${xpdir}/checkpoints
-# srun time python3 -m openpifpaf.train \
-#   --output ${xpdir}/checkpoints/model.pt \
-#   --dataset ${dataset} \
-#   --jaad-root-dir /work/vita/datasets/JAAD/ \
-#   --jaad-subset ${jaadsubset} \
-#   --jaad-training-set ${trainsplit} \
-#   --jaad-validation-set ${evalsplit} \
-#   --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
-#   --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
-#   --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
-#   --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
-#   --cocokp-orientation-invariant 0.1 \
-#   --cocokp-upsample=2 \
-#   --coco-eval-orientation-invariant 0.0 \
-#   --auto-tune-mtl \
-#   --jaad-top-crop-ratio 0.33 \
-#   --log-interval 11 \
-#   --val-interval 1 \
-#   --val-batches 1 \
-#   --epochs ${epochs} \
-#   --batch-size 4 \
-#   --lr ${lr} \
-#   --weight-decay 5e-4 \
-#   --detection-bias-prior 0.01 \
-#   --attribute-focal-gamma 2 \
-#   --momentum 0.95 \
-#   --checkpoint ${checkpoint} \
-#   --attribute-regression-loss l2 \
-#   --jaad-head-upsample 2 \
-#   --jaad-pedestrian-attributes ${attributes} \
-#   --lambdas ${lambdas} \
-#   2>&1 | tee ${xpdir}/logs/train_log.txt
-# echo "Training done!"
+echo "Start training..."
+mkdir -p ${xpdir}/checkpoints
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --auto-tune-mtl \
+  --jaad-top-crop-ratio 0.33 \
+  --log-interval 11 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --weight-decay 5e-4 \
+  --detection-bias-prior 0.01 \
+  --attribute-focal-gamma 2 \
+  --momentum 0.95 \
+  --checkpoint ${checkpoint} \
+  --attribute-regression-loss l2 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
 
 # 
 
@@ -115,47 +115,47 @@ mkdir -p ${xpdir}/images
 # done
 
 evalfrom=4
+checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch254'
+echo "Start evaluating ${evalfrom}..."
+
+srun time python3 -m openpifpaf.eval \
+  --output ${xpdir}/predictions/model_slice_1_p_${evalepoch} \
+  --dataset jaad \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-testing-set ${evalsplit} \
+  --checkpoint ${checkpoint} \
+  --batch-size 4 \
+  --head-consolidation=keep \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes will_cross \
+  --decoder-use-pifpaf-bbox \
+  --jaad-slice 0 30 \
+  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+echo "Evaluation done!"
+
+evalfrom=4
 checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch253'
 echo "Start evaluating ${evalfrom}..."
 
-# srun time python3 -m openpifpaf.eval \
-#   --output ${xpdir}/predictions/model_slice_1_p_${evalepoch} \
-#   --dataset jaad \
-#   --jaad-root-dir /work/vita/datasets/JAAD/ \
-#   --jaad-subset ${jaadsubset} \
-#   --jaad-testing-set ${evalsplit} \
-#   --checkpoint ${checkpoint} \
-#   --batch-size 4 \
-#   --head-consolidation=keep \
-#   --jaad-head-upsample 2 \
-#   --jaad-pedestrian-attributes will_cross \
-#   --decoder-use-pifpaf-bbox \
-#   --jaad-slice 0 30 \
-#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-# echo "Evaluation done!"
-
-# evalfrom=4
-# checkpoint='/home/michels/results/taylor/cross_entropy/checkpoints/model.pt.epoch253'
-# echo "Start evaluating ${evalfrom}..."
-
-# srun time python3 -m openpifpaf.eval \
-#   --output ${xpdir}/predictions/model_slice_1_d_${evalepoch} \
-#   --dataset jaad \
-#   --jaad-root-dir /work/vita/datasets/JAAD/ \
-#   --jaad-subset ${jaadsubset} \
-#   --jaad-testing-set ${evalsplit} \
-#   --checkpoint ${checkpoint} \
-#   --batch-size 4 \
-#   --head-consolidation filter_and_extend \
-#   --decoder-s-threshold 0.2 \
-#   --decoder-optics-min-cluster-size 10 \
-#   --decoder-optics-epsilon 5.0 \
-#   --decoder-optics-cluster-threshold 0.5 \
-#   --jaad-head-upsample 2 \
-#   --jaad-pedestrian-attributes will_cross \
-#   --jaad-slice 0 30 \
-#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-# echo "Evaluation done!"
+srun time python3 -m openpifpaf.eval \
+  --output ${xpdir}/predictions/model_slice_1_d_${evalepoch} \
+  --dataset jaad \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-testing-set ${evalsplit} \
+  --checkpoint ${checkpoint} \
+  --batch-size 4 \
+  --head-consolidation filter_and_extend \
+  --decoder-s-threshold 0.2 \
+  --decoder-optics-min-cluster-size 10 \
+  --decoder-optics-epsilon 5.0 \
+  --decoder-optics-cluster-threshold 0.5 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes will_cross \
+  --jaad-slice 0 30 \
+  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+echo "Evaluation done!"
 
 #  
 
