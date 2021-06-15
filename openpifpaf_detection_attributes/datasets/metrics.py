@@ -676,10 +676,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
         # Initialize ground truths
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
         
-        
-
-        
-        
         for att in ["is_crossing", "is_not_crossing"]:
             gt_match = {}
             for gt in ground_truth:
