@@ -107,6 +107,7 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
+    --head-consolidation=keep \
     --jaad-head-upsample 2 \
     --decoder-use-pifpaf-bbox \
     --jaad-pedestrian-attributes ${attributes} \
