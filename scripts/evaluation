@@ -77,7 +77,7 @@ clusterthreshold=0.5
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_taylor \
-  --dataset ${dataset} \
+  --dataset jaad \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
