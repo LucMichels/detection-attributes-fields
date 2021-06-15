@@ -585,9 +585,6 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         # Ignore instance
                         pass
                         
-                    else:
-                        # Ignore instance
-                        pass
                 else:
                     #missed+=1
                     # False positive
