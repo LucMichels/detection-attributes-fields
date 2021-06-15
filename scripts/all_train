@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:45:30
+#SBATCH --time=00:00:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -65,7 +65,7 @@ do
     --checkpoint ${evalfrom} \
     --batch-size 4 \
     --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes="detection will_cross" \
+    --jaad-pedestrian-attributes ${attributes} \
     --fork-normalization-operation ${mtlgradmerge} \
     --fork-normalization-duplicates ${duplicates} \
     --head-consolidation 'filter_and_extend' \
