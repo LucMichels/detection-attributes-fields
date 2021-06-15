@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:45:30
+#SBATCH --time=00:00:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -94,6 +94,7 @@ mkdir -p ${xpdir}/checkpoints
 # echo "Training done!"
 
 mkdir -p ${xpdir}/predictions
+mkdir -p ${xpdir}/images
 
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 do
@@ -107,6 +108,9 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
+    --save-all ${xpdir}/images \
+    --show-final-image \
+    --show-final-ground-truth \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
     --decoder-s-threshold ${sthreshold} \
