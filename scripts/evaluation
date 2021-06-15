@@ -37,13 +37,13 @@ COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
 # Training
 lr=1e-5
 epochs=258
-attributes='will_cross'
+attributes='detection will_cross'
 duplicates=2
 lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 
-checkpoint='/home/michels/results/taylor/multiple_datasets_pifpaf_detect_100/checkpoints/model.pt.epoch251'
+checkpoint='/home/michels/results/taylor/results/taylor/detection_train/checkpoints/model.pt.epoch001'
 # checkpoint=resnet50
 # cd /home/michels/detection-attributes-fields/
 # cd /home/michels/temp_detect/
@@ -55,19 +55,37 @@ echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
 
 
-echo "Start evaluating 1..."
+# echo "Start evaluating 1..."
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_jaad_detect \
+#   --dataset jaad \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${checkpoint} \
+#   --batch-size 4 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation=keep \
+#   --decoder-use-pifpaf-bbox \
+#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+# echo "Evaluation done!"
+
+
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_jaad_detect \
-  --dataset jaad \
+  --output ${xpdir}/predictions/model_taylor \
+  --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
-  --checkpoint ${checkpoint} \
+  --checkpoint ${evalfrom} \
   --batch-size 4 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation=keep \
-  --decoder-use-pifpaf-bbox \
+  --decoder-s-threshold ${sthreshold} \
+  --decoder-optics-min-cluster-size ${minclustersize} \
+  --decoder-optics-epsilon ${epsilon} \
+  --decoder-optics-cluster-threshold ${clusterthreshold} \
   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 echo "Evaluation done!"
 
