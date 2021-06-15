@@ -70,7 +70,10 @@ mkdir -p ${xpdir}/checkpoints
 #   --decoder-use-pifpaf-bbox \
 #   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
 # echo "Evaluation done!"
-
+sthreshold=0.2
+minclustersize=10
+epsilon=5.0
+clusterthreshold=0.5
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_taylor \
