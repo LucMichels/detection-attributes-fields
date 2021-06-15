@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30 #02:45:30
+#SBATCH --time=00:15:00 #02:45:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -100,7 +100,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_${evalepoch} \
+    --output ${xpdir}/predictions/model_slice_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
