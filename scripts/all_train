@@ -65,7 +65,7 @@ do
     --checkpoint ${evalfrom} \
     --batch-size 4 \
     --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes="will_cross" \
+    --jaad-pedestrian-attributes="detection will_cross" \
     --fork-normalization-operation ${mtlgradmerge} \
     --fork-normalization-duplicates ${duplicates} \
     --head-consolidation 'filter_and_extend' \
