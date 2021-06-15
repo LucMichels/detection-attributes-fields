@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30 #02:45:30
+#SBATCH --time=02:00:30 #02:45:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -46,7 +46,7 @@ mtlgradmerge='power'
 attributes='will_cross'
 duplicates=35
 taskweight=7.0
-lambdas="1.0 0.00001 0.00001"
+lambdas="0.2 2 2"
 
 sthreshold=0.2
 minclustersize=10
@@ -77,7 +77,6 @@ srun time python3 -m openpifpaf.train \
   --log-interval 11 \
   --val-interval 1 \
   --val-batches 1 \
-  --dataset-weights 0.9 0.1 \
   --epochs ${epochs} \
   --batch-size 4 \
   --lr ${lr} \
