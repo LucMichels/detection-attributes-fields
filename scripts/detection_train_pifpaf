@@ -66,11 +66,10 @@ srun time python3 -m openpifpaf.train \
   --epochs ${epochs} \
   --batch-size 4 \
   --lr ${lr} \
-  --lr-warm-up-start-epoch -1 \
   --weight-decay 5e-4 \
   --momentum 0.95 \
   --checkpoint resnet50 \
-  --pifpaf-pretraining \
+  --jaad-pedestrian-attributes ${attributes} \
   --detection-bias-prior 0.01 \
   --jaad-head-upsample 2 \
   --lambdas ${lambdas} \
