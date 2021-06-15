@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30
+#SBATCH --time=00:10:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -96,6 +96,32 @@ mkdir -p ${xpdir}/checkpoints
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 
+# for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+# do
+#   echo "Start evaluating ${evalfrom}..."
+#   evalepoch=${evalfrom: -3}
+#   srun time python3 -m openpifpaf.eval \
+#     --output ${xpdir}/predictions/model_${evalepoch} \
+#     --dataset jaad \
+#     --jaad-root-dir /work/vita/datasets/JAAD/ \
+#     --jaad-subset ${jaadsubset} \
+#     --jaad-testing-set ${evalsplit} \
+#     --checkpoint ${evalfrom} \
+#     --batch-size 4 \
+#     --save-all ${xpdir}/images \
+#     --show-final-image \
+#     --show-final-ground-truth \
+#     --jaad-head-upsample 2 \
+#     --jaad-pedestrian-attributes ${attributes} \
+#     --decoder-s-threshold ${sthreshold} \
+#     --decoder-optics-min-cluster-size ${minclustersize} \
+#     --decoder-optics-epsilon ${epsilon} \
+#     --decoder-optics-cluster-threshold ${clusterthreshold} \
+#     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+#   echo "Evaluation done!"
+# done
+
+
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 do
   echo "Start evaluating ${evalfrom}..."
@@ -108,11 +134,10 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
-    --save-all ${xpdir}/images \
-    --show-final-image \
-    --show-final-ground-truth \
+    --head-consolidation=keep \
     --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes ${attributes} \
+    --decoder-use-pifpaf-bbox \
+    --jaad-pedestrian-attributes="will_cross" \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
