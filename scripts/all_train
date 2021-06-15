@@ -37,7 +37,7 @@ epochs=5
 # Model
 mtlgradmerge='power'
 
-attributes='all'
+attributes='detection intention behavior appearance'
 duplicates=36
 taskweight=7.0
 lambdas="${taskweight} ${taskweight} ${taskweight} ${taskweight} 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"
@@ -65,7 +65,7 @@ do
     --checkpoint ${evalfrom} \
     --batch-size 4 \
     --jaad-head-upsample 2 \
-    --jaad-pedestrian-attributes ${attributes} \
+    --jaad-pedestrian-attributes="will_cross" \
     --fork-normalization-operation ${mtlgradmerge} \
     --fork-normalization-duplicates ${duplicates} \
     --head-consolidation 'filter_and_extend' \
