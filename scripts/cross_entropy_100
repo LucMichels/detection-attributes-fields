@@ -117,6 +117,7 @@ do
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
     --head-consolidation=keep \
+    --decoder-use-pifpaf-bbox \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
