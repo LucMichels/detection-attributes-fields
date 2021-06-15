@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:10:00
+#SBATCH --time=00:45:00
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -127,7 +127,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_${evalepoch} \
+    --output ${xpdir}/predictions/model_slice_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -142,6 +142,7 @@ do
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
     --decoder-optics-cluster-threshold ${clusterthreshold} \
+    --jaad-slice 0 30 \
     2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
