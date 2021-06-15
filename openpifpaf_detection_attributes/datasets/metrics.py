@@ -527,7 +527,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         (not gt.ignore_eval)
                         and (gt.attributes[att] is not None)
                     ):
-                        det_stats['n_gt'] += 1
+                        self.cros_stats[att] += 1
 
 
             # Rank predictions based on confidences
@@ -688,7 +688,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                         (not gt.ignore_eval)
                         and (gt.attributes[att] is not None)
                     ):
-                        det_stats['n_gt'] += 1
+                        self.cros_stats[att]['n_gt'] += 1
             # Match groud truths with closest predictions 
             for gt in ground_truth:
 
