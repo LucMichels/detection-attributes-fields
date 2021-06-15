@@ -78,7 +78,7 @@ srun time python3 -m openpifpaf.eval \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
   --jaad-testing-set ${evalsplit} \
-  --checkpoint ${evalfrom} \
+  --checkpoint ${checkpoint} \
   --batch-size 4 \
   --jaad-head-upsample 2 \
   --jaad-pedestrian-attributes ${attributes} \
