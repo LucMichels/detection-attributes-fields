@@ -30,6 +30,12 @@ jaadsubset='default'
 trainsplit='train'
 evalsplit='val'
 
+# COCO
+COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
+COCO_ANNOTATIONS_VAL='/work/vita/data-coco/annotations/person_keypoints_val2017.json'
+COCO_IMAGE_DIR_TRAIN='/work/vita/data-coco/images/train2017/'
+COCO_IMAGE_DIR_VAL='/work/vita/data-coco/images/val2017/'
+
 # Training
 lr=0.0005
 epochs=251
@@ -61,7 +67,14 @@ srun time python3 -m openpifpaf.train \
   --jaad-subset ${jaadsubset} \
   --jaad-training-set ${trainsplit} \
   --jaad-validation-set ${evalsplit} \
-  --log-interval 10 \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --log-interval 11 \
   --val-interval 1 \
   --val-batches 1 \
   --epochs ${epochs} \
