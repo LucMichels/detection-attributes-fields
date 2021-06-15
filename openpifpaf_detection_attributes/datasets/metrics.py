@@ -520,7 +520,6 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                 if (
                     gt.ignore_eval
                     or (gt.attributes[att] is None)
-                    or (not attribute_meta.is_classification)
                     or (int(gt.attributes[att]) == 1)
                 ):
                     gt_match[gt.id] = False
@@ -682,7 +681,6 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 if (
                     gt.ignore_eval
                     or (gt.attributes[att] is None)
-                    or (not attribute_meta.is_classification)
                     or (int(gt.attributes[att]) == 1)
                 ):
                     gt_match[gt.id] = False
