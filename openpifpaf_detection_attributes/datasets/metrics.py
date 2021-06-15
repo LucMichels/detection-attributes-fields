@@ -122,6 +122,7 @@ class InstanceDetection(openpifpaf.metric.base.Base):
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
         # Store predictions for writing to file
         pred_data = []
+        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
         for pred in predictions:
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
@@ -314,6 +315,7 @@ class Classification(openpifpaf.metric.base.Base):
     def accumulate(self, predictions, image_meta, *, ground_truth=None):
         # Store predictions for writing to file
         pred_data = []
+        predictions = [pred for pred in predictions if isinstance(pred, JaadPedestrianAnnotation)]
         for pred in predictions:
             pred_data.append(pred.json_data())
         self.predictions[image_meta['image_id']] = pred_data
@@ -326,10 +328,13 @@ class Classification(openpifpaf.metric.base.Base):
 
     def accumulate_attribute(self, attribute_meta, predictions, image_meta, *,
                              ground_truth=None):
+
+        ground_truth = [gt for gt in ground_truth if not gt.ignore_eval] # remove ground truth ignore eval as we loop over ground truth
         for cls in range(self.det_stats[attribute_meta.attribute]['n_classes']):
             det_stats = self.det_stats[attribute_meta.attribute][cls]
 
             # Initialize ground truths
+            gt_match = {}
             for gt in ground_truth:
                 if (
                     gt.ignore_eval
@@ -337,19 +342,51 @@ class Classification(openpifpaf.metric.base.Base):
                     or (not attribute_meta.is_classification)
                     or (int(gt.attributes[attribute_meta.attribute]) == cls)
                 ):
+                    gt_match[gt.id] = False
                     if (
                         (not gt.ignore_eval)
                         and (gt.attributes[attribute_meta.attribute] is not None)
                     ):
                         det_stats['n_gt'] += 1
 
+            # Rank predictions based on confidences
+            ranked_preds = []
+            for pred in predictions:
+                if (
+                    (attribute_meta.attribute in pred.attributes)
+                    and (pred.attributes[attribute_meta.attribute] is not None)
+                ):
+                    rpred = copy.deepcopy(pred)
+                    pred_score = pred.attributes[attribute_meta.attribute]
+                    pred_conf = pred.attributes['confidence']
+                    if (
+                        (attribute_meta.attribute == 'confidence')
+                        or (not attribute_meta.is_classification)
+                    ):
+                        rpred.attributes['score'] = pred_conf
+                    elif (
+                        attribute_meta.is_classification
+                        and (attribute_meta.n_channels == 1)
+                    ):
+                        rpred.attributes['score'] = (
+                            (cls*pred_score + (1-cls)*(1.-pred_score))
+                            * pred_conf
+                        )
+                    elif (
+                        attribute_meta.is_classification
+                        and (attribute_meta.n_channels > 1)
+                    ):
+                        rpred.attributes['score'] = pred_score[cls] * pred_conf
+                    ranked_preds.append(rpred)
+            ranked_preds.sort(key=lambda x:x.attributes['score'], reverse=True)
+
             # Match ground truths with closest predictions
             for gt in ground_truth:
                 max_iou = -1.
                 match = None
-                for pred in predictions:
-                    if (
-                        ('width' in pred.attributes)
+                for pred in ranked_preds:
+                    if ((gt.id in gt_match)
+                        and ('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
@@ -473,19 +510,29 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
     def accumulate_attribute(self, predictions, image_meta, *,
                              ground_truth=None):
-        ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
 
         for att in ["is_crossing", "is_not_crossing"]:
             # Initialize ground truths
-            
+            #duplicates = 0
+            #missed = 0
             gt_match = {}
             for gt in ground_truth:
-                gt_match[gt.id] = False
+                if (
+                    gt.ignore_eval
+                    or (gt.attributes[att] is None)
+                    or (not attribute_meta.is_classification)
+                    or (int(gt.attributes[att]) == 1)
+                ):
+                    gt_match[gt.id] = False
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[attribute_meta.attribute] is not None)
+                    ):
+                        det_stats['n_gt'] += 1
 
-            self.cros_stats[att]['n_gt'] += len(ground_truth)
 
             # Rank predictions based on confidences
-            ranked_preds = predictions.sorted(key=lambda x:x.attributes['score'], reverse=True)
+            ranked_preds = sorted(predictions, key=lambda x:x.attributes['confidence'], reverse=True)
 
             # Match predictions with closest groud truths
             for pred in ranked_preds:
@@ -507,33 +554,49 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
                         max_iou = iou
                         match = gt
+                
 
                 # Classify predictions as True Positives or False Positives
                 if match is not None:
-                    if ((match.attributes[attribute_meta.attribute] is not None)
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[att] is not None)
                     ):
                         if not gt_match[match.id]:
+                            
                             # check if True positive
-                            self.cros_stats[att]['score'].append(pred.attributes['score'])
-                            tp = argmax([match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]) == gt.attribute[att] and gt.attribute[att] == 1
+                            preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
+                            p = argmax(preds) if att == "is_crossing" else 1 - argmax(preds)
+                            tp = p == gt.attributes[att] and gt.attributes[att] == 1 # redundant now that we used if (gt.id in gt_match) ?
                             tp = int(tp)
                             self.cros_stats[att]['tp'].append(tp)
                             self.cros_stats[att]['fp'].append(1-tp)
 
                             gt_match[match.id] = True
+                            score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
+                            self.cros_stats[att]['score'].append(score)
                         else:
+                            #duplicates+=1
                             # False positive (multiple detections)
-                            self.cros_stats[att]['score'].append(pred.attributes['score'])
+                            score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
+                            self.cros_stats[att]['score'].append(score)
                             self.cros_stats[att]['tp'].append(0)
                             self.cros_stats[att]['fp'].append(1)
+
                     else:
                         # Ignore instance
                         pass
+                        
                 else:
+                    #missed+=1
                     # False positive
-                    self.cros_stats[att]['score'].append(pred.attributes['score'])
+                    self.cros_stats[att]['score'].append(pred.attributes['confidence'])
                     self.cros_stats[att]['tp'].append(0)
                     self.cros_stats[att]['fp'].append(1)     
+            # print("hello duplicate", duplicates)
+            # print("hello missed", missed)
+            # print("hello total", len(ground_truth))
+            # sys.stdout.flush()
 
 
     def stats(self):
@@ -612,16 +675,31 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
         # Initialize ground truths
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
+        gt_match = {}
+        for gt in ground_truth:
+            if (
+                gt.ignore_eval
+                or (gt.attributes[attribute_meta.attribute] is None)
+                or (not attribute_meta.is_classification)
+                or (int(gt.attributes[attribute_meta.attribute]) == cls)
+            ):
+                gt_match[gt.id] = False
+                if ((not gt.ignore_eval)
+                    and (gt.attributes[attribute_meta.attribute] is not None)
+                ):
+                    det_stats['n_gt'] += 1
 
+        
+        
         for att in ["is_crossing", "is_not_crossing"]:
-            self.cros_stats[att]['n_gt'] += len(ground_truth)
             # Match groud truths with closest predictions 
             for gt in ground_truth:
 
                 max_iou = -1.
                 match = None
                 for pred in predictions:
-                    if (('width' in pred.attributes)
+                    if ((gt.id in gt_match)
+                        and ('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
@@ -643,27 +721,26 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
                     # get prediction
                     preds = [match.attributes["is_not_crossing_reg"], match.attributes["is_crossing_reg"]]
-                    pred = argmax(preds) 
+                    p = argmax(preds) if att == "is_crossing" else 1 - argmax(preds)
                     score = softmax(preds/sum(preds))[1] if att == "is_crossing" else softmax(preds/sum(preds))[0]
                     self.cros_stats[att]['score'].append(score)
 
                     truth = gt.attributes[att]
-                    self.cros_stats[att]['pred'].append(pred)
+                    self.cros_stats[att]['pred'].append(p)
                     self.cros_stats[att]['true'].append(truth) 
 
-                    tp = int(pred == truth and truth == 1)
-                    print(tp, pred, truth)
+                    tp = int(p == truth and truth == 1)
                     self.cros_stats[att]['tp'].append(tp)
                     self.cros_stats[att]['fp'].append(1-tp)    
 
                 else:
                     # Default to predicting not crossing
-                    pred = 0 if att == "is_crossing" else 1
+                    p = 0 if att == "is_crossing" else 1
                     self.cros_stats[att]['score'].append(0.0)
-                    self.cros_stats[att]['pred'].append(pred)
+                    self.cros_stats[att]['pred'].append(p)
                     self.cros_stats[att]['true'].append(gt.attributes[att])      
                     truth = gt.attributes[att]
-                    tp = int(pred == truth and truth == 1)
+                    tp = int(p == truth and truth == 1)
                     self.cros_stats[att]['tp'].append(tp)
                     self.cros_stats[att]['fp'].append(1-tp)     
 
