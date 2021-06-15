@@ -526,7 +526,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                     gt_match[gt.id] = False
                     if (
                         (not gt.ignore_eval)
-                        and (gt.attributes[attribute_meta.attribute] is not None)
+                        and (gt.attributes[att] is not None)
                     ):
                         det_stats['n_gt'] += 1
 
@@ -675,23 +675,26 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
         # Initialize ground truths
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
-        gt_match = {}
-        for gt in ground_truth:
-            if (
-                gt.ignore_eval
-                or (gt.attributes[attribute_meta.attribute] is None)
-                or (not attribute_meta.is_classification)
-                or (int(gt.attributes[attribute_meta.attribute]) == cls)
-            ):
-                gt_match[gt.id] = False
-                if ((not gt.ignore_eval)
-                    and (gt.attributes[attribute_meta.attribute] is not None)
-                ):
-                    det_stats['n_gt'] += 1
+        
+        
 
         
         
         for att in ["is_crossing", "is_not_crossing"]:
+            gt_match = {}
+            for gt in ground_truth:
+                if (
+                    gt.ignore_eval
+                    or (gt.attributes[att] is None)
+                    or (not attribute_meta.is_classification)
+                    or (int(gt.attributes[att]) == 1)
+                ):
+                    gt_match[gt.id] = False
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[att] is not None)
+                    ):
+                        det_stats['n_gt'] += 1
             # Match groud truths with closest predictions 
             for gt in ground_truth:
 
