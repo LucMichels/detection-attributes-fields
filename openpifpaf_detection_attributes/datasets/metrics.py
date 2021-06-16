@@ -218,8 +218,10 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (match.attributes[attribute_meta.attribute] is not None)
                     ):
                         if not gt_match[match.id]:
+                            print(pred.attributes['score'])
                             if pred.attributes[attribute_meta.attribute] != match.attributes[attribute_meta.attribute]:
                                 print(pred.attributes[attribute_meta.attribute], match.attributes[attribute_meta.attribute])
+                                
                                 sys.stdout.flush()
                             # True positive
                             det_stats['score'].append(pred.attributes['score'])
