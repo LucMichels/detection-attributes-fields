@@ -218,6 +218,9 @@ class InstanceDetection(openpifpaf.metric.base.Base):
                         and (match.attributes[attribute_meta.attribute] is not None)
                     ):
                         if not gt_match[match.id]:
+                            if pred.attributes[attribute_meta.attribute] != match.attributes[attribute_meta.attribute]:
+                                print(pred.attributes[attribute_meta.attribute] != match.attributes[attribute_meta.attribute])
+                                sys.stout.flush()
                             # True positive
                             det_stats['score'].append(pred.attributes['score'])
                             det_stats['tp'].append(1)
@@ -513,26 +516,27 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
         for att in ["is_crossing", "is_not_crossing"]:
             # Initialize ground truths
-            #duplicates = 0
-            #missed = 0
+            duplicates = 0
+            missed = 0
             gt_match = {}
             for gt in ground_truth:
                 if (
                     gt.ignore_eval
                     or (gt.attributes[att] is None)
-                    or (not attribute_meta.is_classification)
                     or (int(gt.attributes[att]) == 1)
                 ):
                     gt_match[gt.id] = False
                     if (
                         (not gt.ignore_eval)
-                        and (gt.attributes[attribute_meta.attribute] is not None)
+                        and (gt.attributes[att] is not None)
                     ):
-                        det_stats['n_gt'] += 1
+                        self.cros_stats[att]['n_gt'] += 1
 
-
+            for pred in predictions:
+                preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
+                pred.attributes['score'] = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
             # Rank predictions based on confidences
-            ranked_preds = sorted(predictions, key=lambda x:x.attributes['confidence'], reverse=True)
+            ranked_preds = sorted(predictions, key=lambda x:x.attributes['score'], reverse=True)
 
             # Match predictions with closest groud truths
             for pred in ranked_preds:
@@ -576,7 +580,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
                         else:
-                            #duplicates+=1
+                            duplicates+=1
                             # False positive (multiple detections)
                             score = pred.attributes['confidence'] * softmax(preds/sum(preds))[0 if att == "is_not_crossing" else 1]
                             self.cros_stats[att]['score'].append(score)
@@ -588,15 +592,11 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         pass
                         
                 else:
-                    #missed+=1
+                    missed+=1
                     # False positive
                     self.cros_stats[att]['score'].append(pred.attributes['confidence'])
                     self.cros_stats[att]['tp'].append(0)
                     self.cros_stats[att]['fp'].append(1)     
-            # print("hello duplicate", duplicates)
-            # print("hello missed", missed)
-            # print("hello total", len(ground_truth))
-            # sys.stdout.flush()
 
 
     def stats(self):
@@ -606,6 +606,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
         ap = 0
         for att in ["is_crossing", "is_not_crossing"]:
             ap += (compute_ap(self.cros_stats[att]) * 0.5)
+            print(self.cros_stats[att]["n_gt"], "n_gt")
 
         text_labels.append('hazik_instance_crossing_AP')
         stats.append(ap)
@@ -675,31 +676,28 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
 
         # Initialize ground truths
         ground_truth = [gt for gt in ground_truth if not gt.ignore_eval]
-        gt_match = {}
-        for gt in ground_truth:
-            if (
-                gt.ignore_eval
-                or (gt.attributes[attribute_meta.attribute] is None)
-                or (not attribute_meta.is_classification)
-                or (int(gt.attributes[attribute_meta.attribute]) == cls)
-            ):
-                gt_match[gt.id] = False
-                if ((not gt.ignore_eval)
-                    and (gt.attributes[attribute_meta.attribute] is not None)
-                ):
-                    det_stats['n_gt'] += 1
-
-        
         
         for att in ["is_crossing", "is_not_crossing"]:
+            gt_match = {}
+            for gt in ground_truth:
+                if (
+                    gt.ignore_eval
+                    or (gt.attributes[att] is None)
+                    or (int(gt.attributes[att]) == 1)
+                ):
+                    gt_match[gt.id] = False
+                    if (
+                        (not gt.ignore_eval)
+                        and (gt.attributes[att] is not None)
+                    ):
+                        self.cros_stats[att]['n_gt'] += 1
             # Match groud truths with closest predictions 
             for gt in ground_truth:
 
                 max_iou = -1.
                 match = None
                 for pred in predictions:
-                    if ((gt.id in gt_match)
-                        and ('width' in pred.attributes)
+                    if (('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
