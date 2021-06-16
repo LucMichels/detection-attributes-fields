@@ -567,7 +567,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                             preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
                             p = argmax(preds) if att == "is_crossing" else 1 - argmax(preds)
                             tp = p == gt.attributes[att] and gt.attributes[att] == 1 # redundant now that we used if (gt.id in gt_match) ?
-                            tp = int(tp)
+                            tp = int(1)
                             self.cros_stats[att]['tp'].append(tp)
                             self.cros_stats[att]['fp'].append(1-tp)
 

@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:15:00 # 3:10:0
+#SBATCH --time=00:00:30 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -42,8 +42,8 @@ duplicates=2
 lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
-
-checkpoint='/home/michels/results/taylor/scale/checkpoints/model.pt.epoch254'
+evalepoch=5
+checkpoint='/home/michels/results/taylor/focus_hazik_wd_30/checkpoints/model.pt.epoch255'
 # checkpoint=resnet50
 cd /home/michels/detection-attributes-fields/
 # cd /home/michels/temp_detect/
@@ -52,6 +52,21 @@ mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 echo "Start training..."
 mkdir -p ${xpdir}/checkpoints
+
+srun time python3 -m openpifpaf.eval \
+  --output ${xpdir}/predictions/model_slice_${evalepoch} \
+  --dataset jaad \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-testing-set ${evalsplit} \
+  --checkpoint ${checkpoint} \
+  --batch-size 4 \
+  --head-consolidation=keep \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --jaad-invert 99999 \
+  --jaad-slice 0 30 
+
 
 # srun time python3 -m openpifpaf.train \
 #   --output ${xpdir}/checkpoints/model.pt \
@@ -110,22 +125,22 @@ mkdir -p ${xpdir}/checkpoints
 # done
 
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
-  --dataset jaad \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${checkpoint} \
-  --batch-size 6 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation=keep \
-  --force-complete-pose --seed-threshold=0.2 \
-  --jaad-invert 120 \
-  --jaad-truncate \
-  2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
-echo "Evaluation done!"
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
+#   --dataset jaad \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${checkpoint} \
+#   --batch-size 6 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation=keep \
+#   --force-complete-pose --seed-threshold=0.2 \
+#   --jaad-invert 120 \
+#   --jaad-truncate \
+#   2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+# echo "Evaluation done!"
 
 
 cd -
