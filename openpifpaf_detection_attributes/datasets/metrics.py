@@ -695,8 +695,7 @@ class ClassificationHazik(openpifpaf.metric.base.Base):
                 max_iou = -1.
                 match = None
                 for pred in predictions:
-                    if ((gt.id in gt_match)
-                        and ('width' in pred.attributes)
+                    if (('width' in pred.attributes)
                         and ('height' in pred.attributes)
                     ):
                         iou = compute_iou(pred.attributes['center'], pred.attributes['width'],
