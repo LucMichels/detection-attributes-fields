@@ -8,7 +8,7 @@ import sys
 import openpifpaf
 from numpy import argmax
 from .headmeta import AttributeMeta
-
+import numpy as np
 from .jaad.annotation import JaadPedestrianAnnotation
 
 import sklearn
