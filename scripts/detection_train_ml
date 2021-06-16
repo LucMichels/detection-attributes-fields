@@ -108,9 +108,6 @@ do
     --jaad-testing-set ${evalsplit} \
     --checkpoint ${evalfrom} \
     --batch-size 4 \
-    --save-all ${xpdir}/images \
-    --show-final-image \
-    --show-final-ground-truth \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
     --decoder-s-threshold ${sthreshold} \
