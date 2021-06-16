@@ -43,7 +43,7 @@ lambdas="100.0 100.0 1.0 1.0"
 
 SECONDS=0
 evalepoch=5
-checkpoint='/home/michels/results/taylor/focus_hazik_wd/checkpoints/model.pt.epoch255'
+checkpoint='/home/michels/results/taylor/focus_hazik_wd/checkpoints/model.pt.epoch254'
 # checkpoint=resnet50
 cd /home/michels/detection-attributes-fields/
 # cd /home/michels/temp_detect/
