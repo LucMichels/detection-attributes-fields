@@ -534,8 +534,8 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
 
             for pred in predictions:
                 preds = [pred.attributes["is_not_crossing_reg"], pred.attributes["is_crossing_reg"]]
-                p = argmax(preds) if att == "is_crossing" else 1 - argmax(preds)
-                p = softmax(preds/np.sum(preds))[0 if att == "is_not_crossing" else 1]
+                #p = argmax(preds) if att == "is_crossing" else 1 - argmax(preds)
+                p = softmax(preds)[0 if att == "is_not_crossing" else 1]
                 pred.attributes['score'] = pred.attributes['confidence'] * p
             # Rank predictions based on confidences
             ranked_preds = sorted(predictions, key=lambda x:x.attributes['score'], reverse=True)
