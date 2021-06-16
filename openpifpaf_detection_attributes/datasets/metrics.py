@@ -603,8 +603,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
         ap = 0
         for att in ["is_crossing", "is_not_crossing"]:
             ap += (compute_ap(self.cros_stats[att]) * 0.5)
-            print(self.cros_stats[att])
-            print(self.cros_stats[att]["n_gt"])
+            print(self.cros_stats[att]["n_gt"], "n_gt")
 
         text_labels.append('hazik_instance_crossing_AP')
         stats.append(ap)
