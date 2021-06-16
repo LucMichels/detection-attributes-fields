@@ -549,7 +549,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                     else:
                         iou = 0.
-                    if (iou > 0.5) and (iou >= max_iou):
+                    if (iou > 0.25) and (iou >= max_iou):
 
                         max_iou = iou
                         match = gt
