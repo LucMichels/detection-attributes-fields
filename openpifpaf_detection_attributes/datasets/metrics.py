@@ -527,7 +527,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                         (not gt.ignore_eval)
                         and (gt.attributes[att] is not None)
                     ):
-                        self.cros_stats[att] += 1
+                        self.cros_stats[att]['n_gt'] += 1
 
 
             # Rank predictions based on confidences
@@ -549,7 +549,7 @@ class InstanceHazikDetection(openpifpaf.metric.base.Base):
                                           gt.attributes['height'])
                     else:
                         iou = 0.
-                    if (iou > 0.25) and (iou >= max_iou):
+                    if (iou > 0.4) and (iou >= max_iou):
 
                         max_iou = iou
                         match = gt
