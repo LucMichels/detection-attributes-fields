@@ -144,12 +144,7 @@ class Jaad(openpifpaf.datasets.DataModule):
                            Second argument is the size in frames of the slice (takes the x previous frames')
 
 
-        # Metrics
-        group.add_argument('--jaad-metrics',
-                           dest='jaad_metrics', nargs='*', type=str,
-                           default=['instance'],
-                           choices=['instance', 'classification', 'hazik_instance', 'hazik_classification'],
-                           help='Chose evaluation metric')
+
 
 
 
