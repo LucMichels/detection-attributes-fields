@@ -11,6 +11,7 @@ from .. import attribute
 from .. import encoder
 from .. import headmeta
 from .. import metrics as eval_metrics
+import sys
 
 
 class Jaad(openpifpaf.datasets.DataModule):
@@ -310,5 +311,7 @@ class Jaad(openpifpaf.datasets.DataModule):
             return eval_metrics.InstanceDetection(self.head_metas)
 
     def metrics(self):
-        metrics = [self.keyword_to_metric(metric) in self.metrics]
-        return metrics
+        m = [self.keyword_to_metric(metric) in self.metrics]
+        print(m)
+        sys.stdout.flush()
+        return m
