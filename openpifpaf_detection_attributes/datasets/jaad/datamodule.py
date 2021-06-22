@@ -143,6 +143,14 @@ class Jaad(openpifpaf.datasets.DataModule):
                            Second argument is the size in frames of the slice (takes the x previous frames')
 
 
+        # Metrics
+        group.add_argument('--jaad-metrics',
+                           dest='jaad_metrics', nargs='*', type=str,
+                           default=['instance'],
+                           choices=['instance', 'classification', 'hazik_instance', 'hazik_classification'],
+                           help='Chose evaluation metric')
+
+
 
 
     @classmethod
@@ -177,6 +185,9 @@ class Jaad(openpifpaf.datasets.DataModule):
         # Filtering
         cls.truncate = args.jaad_truncate
         cls.slice = args.jaad_slice
+
+        # Metrics
+        cls.metrics = args.jaad_metrics
         
 
     def _common_preprocess_op(self):
@@ -287,6 +298,17 @@ class Jaad(openpifpaf.datasets.DataModule):
             collate_fn=openpifpaf.datasets.collate_images_anns_meta,
         )
 
+    #['instance', 'classification', 'hazik_instance', 'hazik_classification']
+    def keyword_to_metric(self, keyword):
+        if keyword == "hazik_instance":
+            return eval_metrics.InstanceHazikDetection(self.head_metas)
+        elif keyword == "hazik_classification":
+            return eval_metrics.ClassificationHazik(self.head_metas)
+        elif keyword == "classification":
+            return eval_metrics.Classification(self.head_metas)
+        else: # default to Taylor metric
+            return eval_metrics.InstanceDetection(self.head_metas)
 
     def metrics(self):
-        return [eval_metrics.InstanceHazikDetection(self.head_metas)] # 
+        metrics = [self.keyword_to_metric(metric) in self.metrics]
+        return metrics
