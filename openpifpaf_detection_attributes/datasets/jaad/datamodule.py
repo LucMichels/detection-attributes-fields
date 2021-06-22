@@ -311,7 +311,7 @@ class Jaad(openpifpaf.datasets.DataModule):
 
     def metrics(self):
         chosen_metrics = self.metrics.split("-")
-        if len(chosen_metrics) > 1:
+        if len(chosen_metrics) > 0:
             print(chosen_metrics)
             sys.stdout.flush()
             return [self.keyword_to_metric(chosen_metrics) in self.metrics]
