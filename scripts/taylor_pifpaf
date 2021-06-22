@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=00:00:30
+#SBATCH --time=18:00:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -32,7 +32,7 @@ evalsplit='test'
 
 # Training
 lr=0.0005
-epochs=251
+epochs=255
 
 # COCO
 COCO_ANNOTATIONS_TRAIN='/work/vita/data-coco/annotations/person_keypoints_train2017.json'
