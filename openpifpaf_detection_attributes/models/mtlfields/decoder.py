@@ -332,7 +332,8 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
 #         return c, w, h
 
 class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
-    """Decoder to convert predicted fields to sets of instance detections.
+    """Decoder to convert predicted fields to sets of instance detections. This decoder is able to treat Haziq attributes and use openpifpaf detection bounding boxes
+    instead of the normal bounding boxes. For now this only works with classification attributes and uses the Gaussian trick instead of the confidence field.
 
     Args:
         dataset (str): Dataset name.
@@ -508,7 +509,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
                     attributes["height"] = h
                     attributes["confidence"] = ann.score
 
-                    # for now we remove detections that are too small but we might try with setting these to 1
+                    
                     if ann.score > 0:
                         for meta in self.attribute_metas:
                             att = self.bbox_vote(fields[meta.head_index], bbox, meta)
@@ -595,6 +596,7 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
             x = bbox[0] 
             y = bbox[1]
 
+            # resize field to image size as Haziq did
             field = field.squeeze(0) * 255
             field = cv2.resize(field,
                  (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
@@ -612,8 +614,8 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
 
             pred = np.sum(g*field)
 
-
             return pred
+
         else: # we have only implemented classification and Hazik attributes for our custom decoder
             raise NotImplementedError
 
