@@ -299,7 +299,6 @@ class Jaad(openpifpaf.datasets.DataModule):
             collate_fn=openpifpaf.datasets.collate_images_anns_meta,
         )
 
-    #['instance', 'classification', 'hazik_instance', 'hazik_classification']
     def keyword_to_metric(self, keyword):
         if keyword == "hazik_instance":
             return eval_metrics.InstanceHazikDetection(self.head_metas)
@@ -313,5 +312,6 @@ class Jaad(openpifpaf.datasets.DataModule):
     def metrics(self):
         m = [self.keyword_to_metric(metric) in self.metrics]
         print(m)
+        print([eval_metrics.InstanceHazikDetection(self.head_metas)])
         sys.stdout.flush()
-        return m
+        return [eval_metrics.InstanceHazikDetection(self.head_metas)]
