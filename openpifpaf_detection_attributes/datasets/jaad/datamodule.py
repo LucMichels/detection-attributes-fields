@@ -144,7 +144,12 @@ class Jaad(openpifpaf.datasets.DataModule):
                            Second argument is the size in frames of the slice (takes the x previous frames')
 
 
-
+        # Metrics
+        group.add_argument('--jaad-metrics',
+                           dest='jaad_metrics', type=str,
+                           default=['instance'],
+                           help='Chose evaluation metric. Choose list of metrics from [hazik_instance, hazik_classification, classification, instance] \
+                           in format metric1-metric2-...-metricn. Eg: instance-classification')
 
 
 
@@ -305,8 +310,11 @@ class Jaad(openpifpaf.datasets.DataModule):
             return eval_metrics.InstanceDetection(self.head_metas)
 
     def metrics(self):
-        m = [self.keyword_to_metric(metric) in self.metrics]
-        print(m)
-        print([eval_metrics.InstanceHazikDetection(self.head_metas)])
-        sys.stdout.flush()
-        return [eval_metrics.InstanceHazikDetection(self.head_metas)]
+        chosen_metrics = self.metrics.split("-")
+        if len(chosen_metrics) > 1:
+            print(chosen_metrics)
+            sys.stdout.flush()
+            return [self.keyword_to_metric(chosen_metrics) in self.metrics]
+        else:
+            return [eval_metrics.InstanceDetection(self.head_metas)]
+        
