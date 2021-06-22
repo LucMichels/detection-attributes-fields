@@ -147,7 +147,7 @@ class Jaad(openpifpaf.datasets.DataModule):
         # Metrics
         group.add_argument('--jaad-metrics',
                            dest='jaad_metrics', type=str,
-                           default=['instance'],
+                           default='instance',
                            help='Chose evaluation metric. Choose list of metrics from [hazik_instance, hazik_classification, classification, instance] \
                            in format metric1-metric2-...-metricn. Eg: instance-classification')
 
