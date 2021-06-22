@@ -182,7 +182,7 @@ class Jaad(openpifpaf.datasets.DataModule):
         cls.slice = args.jaad_slice
 
         # Metrics
-        cls.metrics = args.jaad_metrics
+        #cls.metrics = args.jaad_metrics
         
 
     def _common_preprocess_op(self):
