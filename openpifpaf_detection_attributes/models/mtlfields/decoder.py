@@ -199,137 +199,7 @@ class InstanceDecoder(openpifpaf.decoder.decoder.Decoder):
 
 
 
-# class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
-#     """Decoder to convert predicted fields to sets of instance detections.
 
-#     Args:
-#         dataset (str): Dataset name.
-#         object_type (ObjectType): Type of object detected.
-#         attribute_metas (List[AttributeMeta]): List of meta information about
-#             predicted attributes.
-#         full_head_metas (List[openpifpaf.headmeta.Base]): Full list of meta information about all heads used by the network.
-
-#     """
-
-#     # General
-#     dataset = None
-#     object_type = None
-
-#     def __init__(self,
-#                  dataset: str,
-#                  object_type: attribute.ObjectType,
-#                  attribute_metas: List[headmeta.AttributeMeta],
-#                  full_head_metas: List[openpifpaf.headmeta.Base]):
-#         super().__init__()
-#         self.dataset = dataset
-#         self.object_type = object_type
-#         self.annotation = annotation.OBJECT_ANNOTATIONS[self.dataset][self.object_type]
-#         for meta in attribute_metas:
-#             assert meta.dataset == self.dataset
-#             assert meta.object_type is self.object_type
-#         self.attribute_metas = attribute_metas
-#         self.full_head_metas = full_head_metas
-
-#     @classmethod
-#     def factory(self, head_metas: List[openpifpaf.headmeta.Base]):
-#         decoders = []
-#         for dataset in attribute.OBJECT_TYPES:
-#             for object_type in attribute.OBJECT_TYPES[dataset]:
-#                 meta_list = [meta for meta in head_metas
-#                              if (
-#                                 isinstance(meta, headmeta.AttributeMeta)
-#                                 and (meta.dataset == dataset)
-#                                 and (meta.object_type is object_type)
-#                              )]
-#                 if len(meta_list) > 0:
-#                     decoders.append(InstanceHazikCIFCAFDecoder(dataset=dataset,
-#                                                     object_type=object_type,
-#                                                     attribute_metas=meta_list,
-#                                                     full_head_metas=head_metas))
-
-#         return decoders
-
-#     def __call__(self, fields, initial_annotations=None):
-
-#         start = time.perf_counter()
-
-#         assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
-#         cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
-#         caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
-#         assert len(cif_head) == len(caf_head) and len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
-#         cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
-#         parser = argparse.ArgumentParser()
-#         cifcaf_dec.cli(parser)
-#         args, _ = parser.parse_known_args()
-#         cifcaf_dec.configure(args)
-#         annotations_cifcaf = cifcaf_dec(fields)
-
-#         predictions = []
-#         for ann in annotations_cifcaf:
-
-#             if ann.score > 0:
-#                 bbox = ann.bbox()
-
-#                 attributes = {}
-
-#                 c, w, h = self.get_center_width_height_from(bbox)
-#                 attributes["center"] = c
-#                 attributes["width"]  = w
-#                 attributes["height"] = h
-#                 attributes["confidence"] = ann.score
-
-#                 if ann.score > 0:
-#                     for meta in self.attribute_metas:
-#                         att = self.bbox_vote(fields[meta.head_index], bbox, meta)
-#                         attributes[meta.attribute] = att
-
-#                     pred = self.annotation(**attributes)
-#                     predictions.append(pred)
-                
-#         LOG.info('predictions %d, %.3fs',
-#                   len(predictions), time.perf_counter()-start)
-#         return predictions
-
-#     def bbox_vote(self, field, bbox, meta):
-#         field = field.copy()
-
-#         # rescale bbox so its fit fields
-#         #bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
-
-
-#         bbox = np.round(bbox).astype(np.int)
-#         w = max(1, bbox[2])
-#         h = max(1, bbox[3])
-#         x = bbox[0] 
-#         y = bbox[1]
-
-#         field = field.squeeze(0) * 255
-#         field = cv2.resize(field,
-#              (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
-#              int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
-#              )
-
-#         # generate the distribution centered at this box
-#         x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
-
-#         # activity map for current person
-#         y, x = np.arange(field.shape[0]), np.arange(field.shape[1])    
-#         gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
-#         gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
-#         g  = np.outer(gy, gx)
-
-#         pred = np.sum(g*field)
-
-
-#         return pred
-
-#     def get_center_width_height_from(self, bbox):
-#         w = bbox[2]
-#         h = bbox[3]
-#         x = bbox[0] 
-#         y = bbox[1]
-#         c = [x + 0.5*w, y + 0.5*h]
-#         return c, w, h
 
 class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
     """Decoder to convert predicted fields to sets of instance detections. This decoder is able to treat Haziq attributes and use openpifpaf detection bounding boxes
@@ -627,3 +497,135 @@ class InstanceCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
         y = bbox[1]
         c = [x + 0.5*w, y + 0.5*h]
         return c, w, h
+
+# class InstanceHazikCIFCAFDecoder(openpifpaf.decoder.decoder.Decoder):
+#     """Decoder to convert predicted fields to sets of instance detections.
+
+#     Args:
+#         dataset (str): Dataset name.
+#         object_type (ObjectType): Type of object detected.
+#         attribute_metas (List[AttributeMeta]): List of meta information about
+#             predicted attributes.
+#         full_head_metas (List[openpifpaf.headmeta.Base]): Full list of meta information about all heads used by the network.
+
+#     """
+
+#     # General
+#     dataset = None
+#     object_type = None
+
+#     def __init__(self,
+#                  dataset: str,
+#                  object_type: attribute.ObjectType,
+#                  attribute_metas: List[headmeta.AttributeMeta],
+#                  full_head_metas: List[openpifpaf.headmeta.Base]):
+#         super().__init__()
+#         self.dataset = dataset
+#         self.object_type = object_type
+#         self.annotation = annotation.OBJECT_ANNOTATIONS[self.dataset][self.object_type]
+#         for meta in attribute_metas:
+#             assert meta.dataset == self.dataset
+#             assert meta.object_type is self.object_type
+#         self.attribute_metas = attribute_metas
+#         self.full_head_metas = full_head_metas
+
+#     @classmethod
+#     def factory(self, head_metas: List[openpifpaf.headmeta.Base]):
+#         decoders = []
+#         for dataset in attribute.OBJECT_TYPES:
+#             for object_type in attribute.OBJECT_TYPES[dataset]:
+#                 meta_list = [meta for meta in head_metas
+#                              if (
+#                                 isinstance(meta, headmeta.AttributeMeta)
+#                                 and (meta.dataset == dataset)
+#                                 and (meta.object_type is object_type)
+#                              )]
+#                 if len(meta_list) > 0:
+#                     decoders.append(InstanceHazikCIFCAFDecoder(dataset=dataset,
+#                                                     object_type=object_type,
+#                                                     attribute_metas=meta_list,
+#                                                     full_head_metas=head_metas))
+
+#         return decoders
+
+#     def __call__(self, fields, initial_annotations=None):
+
+#         start = time.perf_counter()
+
+#         assert len(fields) >= len(self.attribute_metas) + 2 # make sure we have enough kept all fields (--head-consolidation=keep)
+#         cif_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Cif)]
+#         caf_head = [meta for meta in self.full_head_metas if isinstance(meta, openpifpaf.headmeta.Caf)]
+#         assert len(cif_head) == len(caf_head) and len(caf_head) == 1 # make sure we have the openpifpaf heads (model trained with cocokp and the cifcaf heads)
+#         cifcaf_dec = cifcaf_threadless.CifCaf(cif_head, caf_head)
+#         parser = argparse.ArgumentParser()
+#         cifcaf_dec.cli(parser)
+#         args, _ = parser.parse_known_args()
+#         cifcaf_dec.configure(args)
+#         annotations_cifcaf = cifcaf_dec(fields)
+
+#         predictions = []
+#         for ann in annotations_cifcaf:
+
+#             if ann.score > 0:
+#                 bbox = ann.bbox()
+
+#                 attributes = {}
+
+#                 c, w, h = self.get_center_width_height_from(bbox)
+#                 attributes["center"] = c
+#                 attributes["width"]  = w
+#                 attributes["height"] = h
+#                 attributes["confidence"] = ann.score
+
+#                 if ann.score > 0:
+#                     for meta in self.attribute_metas:
+#                         att = self.bbox_vote(fields[meta.head_index], bbox, meta)
+#                         attributes[meta.attribute] = att
+
+#                     pred = self.annotation(**attributes)
+#                     predictions.append(pred)
+                
+#         LOG.info('predictions %d, %.3fs',
+#                   len(predictions), time.perf_counter()-start)
+#         return predictions
+
+#     def bbox_vote(self, field, bbox, meta):
+#         field = field.copy()
+
+#         # rescale bbox so its fit fields
+#         #bbox = [val/(meta.base_stride/meta.upsample_stride) for val in bbox] 
+
+
+#         bbox = np.round(bbox).astype(np.int)
+#         w = max(1, bbox[2])
+#         h = max(1, bbox[3])
+#         x = bbox[0] 
+#         y = bbox[1]
+
+#         field = field.squeeze(0) * 255
+#         field = cv2.resize(field,
+#              (int(field.shape[1]*(meta.base_stride/meta.upsample_stride)),
+#              int(field.shape[0]*(meta.base_stride/meta.upsample_stride)))
+#              )
+
+#         # generate the distribution centered at this box
+#         x0, y0, sigma_x, sigma_y = x+float(w)/2, y+float(h)/2, float(w)/4, float(h)/4
+
+#         # activity map for current person
+#         y, x = np.arange(field.shape[0]), np.arange(field.shape[1])    
+#         gy = np.exp(-(y-y0)**2/(2*sigma_y**2))
+#         gx = np.exp(-(x-x0)**2/(2*sigma_x**2))
+#         g  = np.outer(gy, gx)
+
+#         pred = np.sum(g*field)
+
+
+#         return pred
+
+#     def get_center_width_height_from(self, bbox):
+#         w = bbox[2]
+#         h = bbox[3]
+#         x = bbox[0] 
+#         y = bbox[1]
+#         c = [x + 0.5*w, y + 0.5*h]
+#         return c, w, h
