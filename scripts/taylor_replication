@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=12:00:30
+#SBATCH --time=00:00:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -27,8 +27,8 @@ mkdir -p ${xpdir}/logs
 # Dataset
 dataset='jaad'
 jaadsubset='default'
-trainsplit='train'
-evalsplit='val'
+trainsplit='trainval'
+evalsplit='test'
 
 # Training
 lr=0.0005
@@ -88,7 +88,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_slice_${evalepoch} \
+    --output ${xpdir}/predictions/model_slice_1_${evalepoch} \
     --dataset ${dataset} \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -97,15 +97,14 @@ do
     --batch-size 4 \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
-    --fork-normalization-operation ${mtlgradmerge} \
-    --fork-normalization-duplicates ${duplicates} \
     --head-consolidation 'filter_and_extend' \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
     --decoder-optics-cluster-threshold ${clusterthreshold} \
+    --jaad-metrics "instance" \
     --jaad-slice 0 30 \
-    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+    2>&1 | tee ${xpdir}/logs/eval_1_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
 
@@ -114,7 +113,7 @@ do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_slice_${evalepoch} \
+    --output ${xpdir}/predictions/model_slice_2_${evalepoch} \
     --dataset ${dataset} \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -123,17 +122,68 @@ do
     --batch-size 4 \
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
-    --fork-normalization-operation ${mtlgradmerge} \
-    --fork-normalization-duplicates ${duplicates} \
     --head-consolidation 'filter_and_extend' \
     --decoder-s-threshold ${sthreshold} \
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
     --decoder-optics-cluster-threshold ${clusterthreshold} \
-    --jaad-slice 0 120 \
-    2>&1 | tee ${xpdir}/logs/eval_${evalepoch}_log.txt
+    --jaad-metrics "instance" \
+    --jaad-slice 0 60 \
+    2>&1 | tee ${xpdir}/logs/eval_2_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
+
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_slice_3_${evalepoch} \
+    --dataset ${dataset} \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 4 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation 'filter_and_extend' \
+    --decoder-s-threshold ${sthreshold} \
+    --decoder-optics-min-cluster-size ${minclustersize} \
+    --decoder-optics-epsilon ${epsilon} \
+    --decoder-optics-cluster-threshold ${clusterthreshold} \
+    --jaad-metrics "instance" \
+    --jaad-slice 0 90 \
+    2>&1 | tee ${xpdir}/logs/eval_3_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_slice_4_${evalepoch} \
+    --dataset ${dataset} \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 4 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation 'filter_and_extend' \
+    --decoder-s-threshold ${sthreshold} \
+    --decoder-optics-min-cluster-size ${minclustersize} \
+    --decoder-optics-epsilon ${epsilon} \
+    --decoder-optics-cluster-threshold ${clusterthreshold} \
+    --jaad-metrics "instance" \
+    --jaad-slice 0 120 \
+    2>&1 | tee ${xpdir}/logs/eval_4_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
 
 cd -
 
