@@ -135,7 +135,7 @@ class Jaad(openpifpaf.datasets.DataModule):
         group.add_argument('--jaad-truncate',
                            dest='jaad_truncate',
                            default=False, action='store_true',
-                           help='on evaluation only consider  frames before crossing')
+                           help='on evaluation only consider frames before crossing')
         group.add_argument('--jaad-slice',
                            dest='jaad_slice', nargs=2, type=int,
                            default=[0, 0],
