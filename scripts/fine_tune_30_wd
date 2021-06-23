@@ -102,7 +102,7 @@ srun time python3 -m openpifpaf.eval \
   --jaad-pedestrian-attributes ${attributes} \
   --force-complete-pose --seed-threshold=0.2 \
   --decoder-use-pifpaf-bbox \
-  --jaad-metrics "hazik_instance" \
+  --jaad-metrics "hazik_instance-hazik_classification" \
   --jaad-invert 99999 \
   --jaad-slice 0 30 \
   2>&1 | tee ${xpdir}/logs/eval_1_log.txt
