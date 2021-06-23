@@ -115,7 +115,7 @@ do
     --decoder-optics-min-cluster-size ${minclustersize} \
     --decoder-optics-epsilon ${epsilon} \
     --decoder-optics-cluster-threshold ${clusterthreshold} \
-    --jaad-metrics='instance' \
+    --jaad-metrics 'instance' \
     --jaad-slice 0 30 \
     2>&1 | tee ${xpdir}/logs/eval_1_${evalepoch}_log.txt
   echo "Evaluation done!"
