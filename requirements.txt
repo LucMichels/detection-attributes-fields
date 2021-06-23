@@ -6,4 +6,6 @@ opencv-python
 torch
 torchvision
 thop
+pycocotools
 openpifpaf>=0.12.9
+
