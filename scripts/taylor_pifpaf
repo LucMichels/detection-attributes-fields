@@ -95,7 +95,7 @@ mkdir -p ${xpdir}/checkpoints
 
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
-
+dataset='jaad'
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 do
   echo "Start evaluating ${evalfrom}..."
