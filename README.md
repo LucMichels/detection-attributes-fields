@@ -46,6 +46,7 @@ The **scripts** folders contain all the different slurm bash scripts used in the
 
 **scripts/taylor_pifpaf**: Runs the same training as in Taylor’s paper but only on the detection and will_cross heads with the added pifpaf heads on the official split and evaluates the snip metrics using the detection head for Taylor’s model. The fork normalization is not used as it is not yet compatible with using openpifpaf heads and COCO dataset.
 
+Note that what follows is the Taylor Mordan original README at the fork's version. 
 
 # Object Detection and Attribute Recognition with Fields
 
