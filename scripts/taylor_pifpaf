@@ -97,24 +97,6 @@ mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 dataset='jaad'
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --force-complete-pose --seed-threshold=0.2 \
-  --decoder-use-pifpaf-bbox \
-  --jaad-pedestrian-attributes "will_cross" \
-  --head-consolidation 'keep' \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 30 \
-  2>&1 | tee ${xpdir}/logs/eval_1_h_log.txt
-echo "Evaluation done!"
-
 # srun time python3 -m openpifpaf.eval \
 #   --output ${xpdir}/predictions/model_slice_1 \
 #   --dataset ${dataset} \
@@ -134,24 +116,6 @@ echo "Evaluation done!"
 #   --jaad-slice 0 30 \
 #   2>&1 | tee ${xpdir}/logs/eval_1_log.txt
 # echo "Evaluation done!"
-
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --force-complete-pose --seed-threshold=0.2 \
-  --decoder-use-pifpaf-bbox \
-  --jaad-pedestrian-attributes "will_cross" \
-  --head-consolidation 'keep' \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 60 \
-  2>&1 | tee ${xpdir}/logs/eval_2_h_log.txt
-echo "Evaluation done!"
 
 # srun time python3 -m openpifpaf.eval \
 #   --output ${xpdir}/predictions/model_slice_1 \
@@ -173,23 +137,6 @@ echo "Evaluation done!"
 #   2>&1 | tee ${xpdir}/logs/eval_2_log.txt
 # echo "Evaluation done!"
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_3 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --force-complete-pose --seed-threshold=0.2 \
-  --decoder-use-pifpaf-bbox \
-  --jaad-pedestrian-attributes "will_cross" \
-  --head-consolidation 'keep' \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 90 \
-  2>&1 | tee ${xpdir}/logs/eval_3_h_log.txt
-echo "Evaluation done!"
 
 # srun time python3 -m openpifpaf.eval \
 #   --output ${xpdir}/predictions/model_slice_3 \
@@ -210,24 +157,6 @@ echo "Evaluation done!"
 #   --jaad-slice 0 90 \
 #   2>&1 | tee ${xpdir}/logs/eval_3_log.txt
 # echo "Evaluation done!"
-
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_4 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --force-complete-pose --seed-threshold=0.2 \
-  --decoder-use-pifpaf-bbox \
-  --jaad-pedestrian-attributes "will_cross" \
-  --head-consolidation 'keep' \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 120 \
-  2>&1 | tee ${xpdir}/logs/eval_4_h_log.txt
-echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_4 \
