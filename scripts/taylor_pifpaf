@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=15:00:30
+#SBATCH --time=00:00:30
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -106,6 +106,8 @@ srun time python3 -m openpifpaf.eval \
   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
   --batch-size 4 \
   --jaad-head-upsample 2 \
+  --force-complete-pose --seed-threshold=0.2 \
+  --decoder-use-pifpaf-bbox \
   --jaad-pedestrian-attributes "will_cross" \
   --head-consolidation 'keep' \
   --jaad-metrics "instance" \
@@ -113,25 +115,25 @@ srun time python3 -m openpifpaf.eval \
   2>&1 | tee ${xpdir}/logs/eval_1_h_log.txt
 echo "Evaluation done!"
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation 'filter_and_extend' \
-  --decoder-s-threshold ${sthreshold} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 30 \
-  2>&1 | tee ${xpdir}/logs/eval_1_log.txt
-echo "Evaluation done!"
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_slice_1 \
+#   --dataset ${dataset} \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
+#   --batch-size 4 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation 'filter_and_extend' \
+#   --decoder-s-threshold ${sthreshold} \
+#   --decoder-optics-min-cluster-size ${minclustersize} \
+#   --decoder-optics-epsilon ${epsilon} \
+#   --decoder-optics-cluster-threshold ${clusterthreshold} \
+#   --jaad-metrics "instance" \
+#   --jaad-slice 0 30 \
+#   2>&1 | tee ${xpdir}/logs/eval_1_log.txt
+# echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1 \
@@ -142,6 +144,8 @@ srun time python3 -m openpifpaf.eval \
   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
   --batch-size 4 \
   --jaad-head-upsample 2 \
+  --force-complete-pose --seed-threshold=0.2 \
+  --decoder-use-pifpaf-bbox \
   --jaad-pedestrian-attributes "will_cross" \
   --head-consolidation 'keep' \
   --jaad-metrics "instance" \
@@ -149,25 +153,25 @@ srun time python3 -m openpifpaf.eval \
   2>&1 | tee ${xpdir}/logs/eval_2_h_log.txt
 echo "Evaluation done!"
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation 'filter_and_extend' \
-  --decoder-s-threshold ${sthreshold} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 60 \
-  2>&1 | tee ${xpdir}/logs/eval_2_log.txt
-echo "Evaluation done!"
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_slice_1 \
+#   --dataset ${dataset} \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
+#   --batch-size 4 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation 'filter_and_extend' \
+#   --decoder-s-threshold ${sthreshold} \
+#   --decoder-optics-min-cluster-size ${minclustersize} \
+#   --decoder-optics-epsilon ${epsilon} \
+#   --decoder-optics-cluster-threshold ${clusterthreshold} \
+#   --jaad-metrics "instance" \
+#   --jaad-slice 0 60 \
+#   2>&1 | tee ${xpdir}/logs/eval_2_log.txt
+# echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1 \
@@ -178,6 +182,8 @@ srun time python3 -m openpifpaf.eval \
   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
   --batch-size 4 \
   --jaad-head-upsample 2 \
+  --force-complete-pose --seed-threshold=0.2 \
+  --decoder-use-pifpaf-bbox \
   --jaad-pedestrian-attributes "will_cross" \
   --head-consolidation 'keep' \
   --jaad-metrics "instance" \
@@ -185,25 +191,25 @@ srun time python3 -m openpifpaf.eval \
   2>&1 | tee ${xpdir}/logs/eval_3_h_log.txt
 echo "Evaluation done!"
 
-srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
-  --dataset ${dataset} \
-  --jaad-root-dir /work/vita/datasets/JAAD/ \
-  --jaad-subset ${jaadsubset} \
-  --jaad-testing-set ${evalsplit} \
-  --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
-  --batch-size 4 \
-  --jaad-head-upsample 2 \
-  --jaad-pedestrian-attributes ${attributes} \
-  --head-consolidation 'filter_and_extend' \
-  --decoder-s-threshold ${sthreshold} \
-  --decoder-optics-min-cluster-size ${minclustersize} \
-  --decoder-optics-epsilon ${epsilon} \
-  --decoder-optics-cluster-threshold ${clusterthreshold} \
-  --jaad-metrics "instance" \
-  --jaad-slice 0 90 \
-  2>&1 | tee ${xpdir}/logs/eval_3_log.txt
-echo "Evaluation done!"
+# srun time python3 -m openpifpaf.eval \
+#   --output ${xpdir}/predictions/model_slice_1 \
+#   --dataset ${dataset} \
+#   --jaad-root-dir /work/vita/datasets/JAAD/ \
+#   --jaad-subset ${jaadsubset} \
+#   --jaad-testing-set ${evalsplit} \
+#   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
+#   --batch-size 4 \
+#   --jaad-head-upsample 2 \
+#   --jaad-pedestrian-attributes ${attributes} \
+#   --head-consolidation 'filter_and_extend' \
+#   --decoder-s-threshold ${sthreshold} \
+#   --decoder-optics-min-cluster-size ${minclustersize} \
+#   --decoder-optics-epsilon ${epsilon} \
+#   --decoder-optics-cluster-threshold ${clusterthreshold} \
+#   --jaad-metrics "instance" \
+#   --jaad-slice 0 90 \
+#   2>&1 | tee ${xpdir}/logs/eval_3_log.txt
+# echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
   --output ${xpdir}/predictions/model_slice_1 \
@@ -214,6 +220,8 @@ srun time python3 -m openpifpaf.eval \
   --checkpoint ${xpdir}/checkpoints/model.pt.epoch255 \
   --batch-size 4 \
   --jaad-head-upsample 2 \
+  --force-complete-pose --seed-threshold=0.2 \
+  --decoder-use-pifpaf-bbox \
   --jaad-pedestrian-attributes "will_cross" \
   --head-consolidation 'keep' \
   --jaad-metrics "instance" \
