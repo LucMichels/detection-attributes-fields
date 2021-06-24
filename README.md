@@ -36,9 +36,7 @@ The **scripts** folders contain all the different slurm bash scripts used in the
 
 **scripts/hazik_replication**: Batch file to obtain the replicated Hazik method on the plugin and the corresponding evaluations. Uses Haziq’s split and evaluates Haziq metrics.
 
-**scripts/fine_tuned**: Batch file to obtain the replicated Hazik method on the plugin where we have added Taylor’s data augmentation and auto-tune mtl. Uses official split and evaluates snip metrics.
-
-**scripts/fine_tuned_hsplit**: Same as last batch file but uses Haziq’s split and evaluates Haziq metrics.
+**scripts/fine_tuned_hsplit**: Batch file to obtain the replicated Hazik method on the plugin where we have added Taylor’s data augmentation and auto-tune mtl. Uses Haziq’s split and evaluates Haziq metrics.
 
 **scripts/fine_tune_30_wd**: Batch file to obtain the replicated Hazik method on the plugin where we have added Taylor’s data augmentation and auto-tune mtl. We also added weight decay and fine tuned the lambdas to get the best result we have achieved with Haziq’s method.
 
