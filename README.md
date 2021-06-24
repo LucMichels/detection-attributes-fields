@@ -1,3 +1,54 @@
+# Adapting Taylor Mordan plugin for JAAD to implement Haziq's method
+
+Note that in the following I write Haziq Razali’s name either as “Haziq” or “Hazik” as I misread the name at the start of the project and used it incorrectly for almost the entirety of the project.
+
+This repository aims to reproduce Haziq’s method from his paper which is no longer available by adapting the plugin created by Taylor Mordan in his paper “Detecting 32 Pedestrian Attributes for Autonomous Vehicles”.
+
+Here we will describe the modifications that were brought to the plugin.
+
+We have added the “Fix” folder which is a fix to openpifpaf as the location of the openpifpaf test was not able to be changed from the command line. 
+
+## Modifications
+We will now describe the modification brought to the plugin.
+
+**openpifpaf_detection_attributes/datasets/jaad/attributes.py**: We added three attributes: “will_cross_reg”, “will_not_cross_reg” that belong to the “hazik” group and “is_not_crossing”
+
+**openpifpaf_detection_attributes/datasets/jaad/datamodule.py**: We added command line arguments to be able to implement Haziq’s method. We can now use hazik augmentation instead of Taylor’s augmentation for training. We can also truncate, slice the dataset, and invert the “is_crossing” attribute. Note that “will_cross_reg” and “will_not_cross_reg” depend on “is_crossing” values.
+Furthermore, we can choose which metrics we wish to use. For more details on how exactly to use the commands check the corresponding helps for --jaad-use-hazik-augmentation, --jaad-truncate, --jaad-slice, --jaad-metrics, --jaad-invert in the command line or directly in code in the cli() function.
+We can also choose Haziq splits instead of the official JAAD split using 'hazik_train' or
+'hazik_test'
+
+**openpifpaf_detection_attributes/datasets/generators.py**: We have modified the generator to output the corresponding Gaussian when using “hazik” attributes and use the default behavior otherwise.
+
+**openpifpaf_detection_attributes/datasets/metrics.py**: We have added 3 new metrics in addition to the InstanceDetection metric. The Classification metric mimics Haziq’s classification metric for attributes. InstanceHazikDetection is the same as InstanceDetection but adapted for Haziq attributes. ClassificationHazik is the reproduction of Haziq’s metrics. Each metric can be used when evaluating using the corresponding keyword in --jaad-metrics
+
+**models/mtlfields/cifcaf_threadless.py**: This is the cifcaf decoder but where the openpifpaf.Decoder inheritance as been removed. It is used by the decoder to compute the openpifpaf bounding boxes.
+
+**openpifpaf_detection_attributes/models/mtlfields/decoder.py**: We modified the decoder such that it could use the openpifpaf bounding box instead of the default detection attributes from Taylor Mordan’s method. We also weight the prediction with the Gaussian centered on each bounding box. This currently only works with 1 channel classification attributes or Haziq’s attributes.
+
+**openpifpaf_detection_attributes/models/mtlfields/loss.py**:  We added support for loss where the arguments were None
+
+## Results replication
+
+The rest of the README after this section is the original README from Taylor Mordan. To be able to use the code provided in this repository one requires to do the same setup done in the “Installation” section below. Note that the requirements.txt file has changed to include pycocotools for openpifpaf evaluation.
+
+The **scripts** folders contain all the different slurm bash scripts used in the project. The important scripts to reproduce the different results in the report are the following:
+
+**scripts/hazik_replication**: Batch file to obtain the replicated Hazik method on the plugin and the corresponding evaluations. Uses Haziq’s split and evaluates Haziq metrics.
+
+**scripts/fine_tuned**: Batch file to obtain the replicated Hazik method on the plugin where we have added Taylor’s data augmentation and auto-tune mtl. Uses official split and evaluates snip metrics.
+
+**scripts/fine_tuned_hsplit**: Same as last batch file but uses Haziq’s split and evaluates Haziq metrics.
+
+**scripts/fine_tune_30_wd**: Batch file to obtain the replicated Hazik method on the plugin where we have added Taylor’s data augmentation and auto-tune mtl. We also added weight decay and fine tuned the lambdas to get the best result we have achieved with Haziq’s method.
+
+**scripts/fine_tune_30_wd_hsplit**:  Same as last batch file but uses Haziq’s split and evaluates Haziq metrics.
+
+**scripts/taylor_replication**: Runs the same training as in Taylor’s paper on the official split and evaluates the snip metrics.
+
+**scripts/taylor_pifpaf**: Runs the same training as in Taylor’s paper but only on the detection and will_cross heads with the added pifpaf heads on the official split and evaluates the snip metrics using either the detection head for Taylor’s model or the bounding boxes from pifpaf. The fork normalization is not used as it is not yet compatible with using openpifpaf heads and COCO dataset.
+
+
 # Object Detection and Attribute Recognition with Fields
 
 A [PyTorch](https://pytorch.org/) implementation of paper [Detecting 32 Pedestrian Attributes for Autonomous Vehicles](https://arxiv.org/abs/2012.02647) by Taylor Mordan (EPFL/VITA), Matthieu Cord (Sorbonne Université, valeo.ai), Patrick Pérez (valeo.ai) and Alexandre Alahi (EPFL/VITA).
