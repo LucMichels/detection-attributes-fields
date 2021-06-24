@@ -174,7 +174,7 @@ echo "Evaluation done!"
 # echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
+  --output ${xpdir}/predictions/model_slice_3 \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
@@ -192,7 +192,7 @@ srun time python3 -m openpifpaf.eval \
 echo "Evaluation done!"
 
 # srun time python3 -m openpifpaf.eval \
-#   --output ${xpdir}/predictions/model_slice_1 \
+#   --output ${xpdir}/predictions/model_slice_3 \
 #   --dataset ${dataset} \
 #   --jaad-root-dir /work/vita/datasets/JAAD/ \
 #   --jaad-subset ${jaadsubset} \
@@ -212,7 +212,7 @@ echo "Evaluation done!"
 # echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
+  --output ${xpdir}/predictions/model_slice_4 \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
@@ -230,7 +230,7 @@ srun time python3 -m openpifpaf.eval \
 echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_1 \
+  --output ${xpdir}/predictions/model_slice_4 \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \

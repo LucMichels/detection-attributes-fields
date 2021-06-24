@@ -123,7 +123,7 @@ mkdir -p ${xpdir}/checkpoints
 # echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_2 \
+  --output ${xpdir}/predictions/model_slice_3 \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
@@ -139,11 +139,11 @@ srun time python3 -m openpifpaf.eval \
   --decoder-optics-cluster-threshold ${clusterthreshold} \
   --jaad-metrics "instance" \
   --jaad-slice 0 90 \
-  2>&1 | tee ${xpdir}/logs/eval_2_log.txt
+  2>&1 | tee ${xpdir}/logs/eval_3_log.txt
 echo "Evaluation done!"
 
 srun time python3 -m openpifpaf.eval \
-  --output ${xpdir}/predictions/model_slice_2 \
+  --output ${xpdir}/predictions/model_slice_4 \
   --dataset ${dataset} \
   --jaad-root-dir /work/vita/datasets/JAAD/ \
   --jaad-subset ${jaadsubset} \
@@ -159,7 +159,7 @@ srun time python3 -m openpifpaf.eval \
   --decoder-optics-cluster-threshold ${clusterthreshold} \
   --jaad-metrics "instance" \
   --jaad-slice 0 120 \
-  2>&1 | tee ${xpdir}/logs/eval_2_log.txt
+  2>&1 | tee ${xpdir}/logs/eval_4_log.txt
 echo "Evaluation done!"
 
 
