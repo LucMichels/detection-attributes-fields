@@ -7,7 +7,7 @@
 #SBATCH --partition=gpu
 #SBATCH --qos=gpu
 #SBATCH --gres=gpu:1
-#SBATCH --time=08:00:30 # 3:10:0
+#SBATCH --time=30:00:00 # 3:10:0
 #SBATCH --output=/home/michels/results/taylor/s%x.out
 
 module purge
@@ -51,40 +51,40 @@ cd /home/michels/detection-attributes-fields/
 mkdir -p ${xpdir}/predictions
 mkdir -p ${xpdir}/images
 echo "Start training..."
-# mkdir -p ${xpdir}/checkpoints
-# srun time python3 -m openpifpaf.train \
-#   --output ${xpdir}/checkpoints/model.pt \
-#   --dataset ${dataset} \
-#   --jaad-root-dir /work/vita/datasets/JAAD/ \
-#   --jaad-subset ${jaadsubset} \
-#   --jaad-training-set ${trainsplit} \
-#   --jaad-validation-set ${evalsplit} \
-#   --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
-#   --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
-#   --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
-#   --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
-#   --cocokp-orientation-invariant 0.1 \
-#   --cocokp-upsample=2 \
-#   --coco-eval-orientation-invariant 0.0 \
-#   --ema 1e-3 \
-#   --jaad-use-hazik-augmentation \
-#   --jaad-top-crop-ratio 0.3 \
-#   --log-interval 11 \
-#   --val-interval 1 \
-#   --val-batches 1 \
-#   --epochs ${epochs} \
-#   --batch-size 4 \
-#   --lr ${lr} \
-#   --weight-decay 0 \
-#   --momentum 0.95 \
-#   --checkpoint ${checkpoint} \
-#   --attribute-regression-loss l2 \
-#   --jaad-head-upsample 2 \
-#   --jaad-pedestrian-attributes ${attributes} \
-#   --lambdas ${lambdas} \
-#   --jaad-invert 99999 \
-#   2>&1 | tee ${xpdir}/logs/train_log.txt
-# echo "Training done!"
+mkdir -p ${xpdir}/checkpoints
+srun time python3 -m openpifpaf.train \
+  --output ${xpdir}/checkpoints/model.pt \
+  --dataset ${dataset} \
+  --jaad-root-dir /work/vita/datasets/JAAD/ \
+  --jaad-subset ${jaadsubset} \
+  --jaad-training-set ${trainsplit} \
+  --jaad-validation-set ${evalsplit} \
+  --cocokp-train-annotations ${COCO_ANNOTATIONS_TRAIN} \
+  --cocokp-val-annotations ${COCO_ANNOTATIONS_VAL} \
+  --cocokp-train-image-dir ${COCO_IMAGE_DIR_TRAIN} \
+  --cocokp-val-image-dir ${COCO_IMAGE_DIR_VAL} \
+  --cocokp-orientation-invariant 0.1 \
+  --cocokp-upsample=2 \
+  --coco-eval-orientation-invariant 0.0 \
+  --ema 1e-3 \
+  --jaad-use-hazik-augmentation \
+  --jaad-top-crop-ratio 0.3 \
+  --log-interval 11 \
+  --val-interval 1 \
+  --val-batches 1 \
+  --epochs ${epochs} \
+  --batch-size 4 \
+  --lr ${lr} \
+  --weight-decay 0 \
+  --momentum 0.95 \
+  --checkpoint ${checkpoint} \
+  --attribute-regression-loss l2 \
+  --jaad-head-upsample 2 \
+  --jaad-pedestrian-attributes ${attributes} \
+  --lambdas ${lambdas} \
+  --jaad-invert 99999 \
+  2>&1 | tee ${xpdir}/logs/train_log.txt
+echo "Training done!"
 
 # 
 
@@ -203,108 +203,12 @@ do
   echo "Evaluation done!"
 done
 
-# for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
-# do
-#   echo "Start evaluating ${evalfrom}..."
-#   evalepoch=${evalfrom: -3}
-#   srun time python3 -m openpifpaf.eval \
-#     --output ${xpdir}/predictions/model_jaad_invert_t_1_${evalepoch} \
-#     --dataset jaad \
-#     --jaad-root-dir /work/vita/datasets/JAAD/ \
-#     --jaad-subset ${jaadsubset} \
-#     --jaad-testing-set ${evalsplit} \
-#     --checkpoint ${evalfrom} \
-#     --batch-size 6 \
-#     --jaad-head-upsample 2 \
-#     --jaad-pedestrian-attributes ${attributes} \
-#     --head-consolidation=keep \
-#     --force-complete-pose --seed-threshold=0.2 \
-#     --decoder-use-pifpaf-bbox \
-#     --jaad-invert 30 \
-#     --jaad-truncate \
-#     --jaad-metrics "hazik_classification" \
-#     2>&1 | tee ${xpdir}/logs/eval_t_1_${evalepoch}_log.txt
-#   echo "Evaluation done!"
-# done
-
-# for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
-# do
-#   echo "Start evaluating ${evalfrom}..."
-#   evalepoch=${evalfrom: -3}
-#   srun time python3 -m openpifpaf.eval \
-#     --output ${xpdir}/predictions/model_jaad_invert_t_2_${evalepoch} \
-#     --dataset jaad \
-#     --jaad-root-dir /work/vita/datasets/JAAD/ \
-#     --jaad-subset ${jaadsubset} \
-#     --jaad-testing-set ${evalsplit} \
-#     --checkpoint ${evalfrom} \
-#     --batch-size 6 \
-#     --jaad-head-upsample 2 \
-#     --jaad-pedestrian-attributes ${attributes} \
-#     --head-consolidation=keep \
-#     --force-complete-pose --seed-threshold=0.2 \
-#     --decoder-use-pifpaf-bbox \
-#     --jaad-invert 60 \
-#     --jaad-truncate \
-#     --jaad-metrics "hazik_classification" \
-#     2>&1 | tee ${xpdir}/logs/eval_t_2_${evalepoch}_log.txt
-#   echo "Evaluation done!"
-# done
-
-# for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
-# do
-#   echo "Start evaluating ${evalfrom}..."
-#   evalepoch=${evalfrom: -3}
-#   srun time python3 -m openpifpaf.eval \
-#     --output ${xpdir}/predictions/model_jaad_invert_t_3_${evalepoch} \
-#     --dataset jaad \
-#     --jaad-root-dir /work/vita/datasets/JAAD/ \
-#     --jaad-subset ${jaadsubset} \
-#     --jaad-testing-set ${evalsplit} \
-#     --checkpoint ${evalfrom} \
-#     --batch-size 6 \
-#     --jaad-head-upsample 2 \
-#     --jaad-pedestrian-attributes ${attributes} \
-#     --head-consolidation=keep \
-#     --force-complete-pose --seed-threshold=0.2 \
-#     --decoder-use-pifpaf-bbox \
-#     --jaad-invert 90 \
-#     --jaad-truncate \
-#     --jaad-metrics "hazik_classification" \
-#     2>&1 | tee ${xpdir}/logs/eval_t_3_${evalepoch}_log.txt
-#   echo "Evaluation done!"
-# done
-
-# for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
-# do
-#   echo "Start evaluating ${evalfrom}..."
-#   evalepoch=${evalfrom: -3}
-#   srun time python3 -m openpifpaf.eval \
-#     --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
-#     --dataset jaad \
-#     --jaad-root-dir /work/vita/datasets/JAAD/ \
-#     --jaad-subset ${jaadsubset} \
-#     --jaad-testing-set ${evalsplit} \
-#     --checkpoint ${evalfrom} \
-#     --batch-size 6 \
-#     --jaad-head-upsample 2 \
-#     --jaad-pedestrian-attributes ${attributes} \
-#     --head-consolidation=keep \
-#     --force-complete-pose --seed-threshold=0.2 \
-#     --decoder-use-pifpaf-bbox \
-#     --jaad-invert 120 \
-#     --jaad-truncate \
-#     --jaad-metrics "hazik_classification" \
-#     2>&1 | tee ${xpdir}/logs/eval_t_4_${evalepoch}_log.txt
-#   echo "Evaluation done!"
-# done
-
 for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
 do
   echo "Start evaluating ${evalfrom}..."
   evalepoch=${evalfrom: -3}
   srun time python3 -m openpifpaf.eval \
-    --output ${xpdir}/predictions/model_jaad_invert_t_4_no_seed_${evalepoch} \
+    --output ${xpdir}/predictions/model_jaad_invert_t_1_${evalepoch} \
     --dataset jaad \
     --jaad-root-dir /work/vita/datasets/JAAD/ \
     --jaad-subset ${jaadsubset} \
@@ -314,15 +218,86 @@ do
     --jaad-head-upsample 2 \
     --jaad-pedestrian-attributes ${attributes} \
     --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
+    --decoder-use-pifpaf-bbox \
+    --jaad-invert 30 \
+    --jaad-truncate \
+    --jaad-metrics "hazik_classification" \
+    2>&1 | tee ${xpdir}/logs/eval_t_1_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_invert_t_2_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 6 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
+    --decoder-use-pifpaf-bbox \
+    --jaad-invert 60 \
+    --jaad-truncate \
+    --jaad-metrics "hazik_classification" \
+    2>&1 | tee ${xpdir}/logs/eval_t_2_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_invert_t_3_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 6 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
+    --decoder-use-pifpaf-bbox \
+    --jaad-invert 90 \
+    --jaad-truncate \
+    --jaad-metrics "hazik_classification" \
+    2>&1 | tee ${xpdir}/logs/eval_t_3_${evalepoch}_log.txt
+  echo "Evaluation done!"
+done
+
+for evalfrom in $(ls -1v ${xpdir}/checkpoints/*.pt.epoch+([0-9]))
+do
+  echo "Start evaluating ${evalfrom}..."
+  evalepoch=${evalfrom: -3}
+  srun time python3 -m openpifpaf.eval \
+    --output ${xpdir}/predictions/model_jaad_invert_t_4_${evalepoch} \
+    --dataset jaad \
+    --jaad-root-dir /work/vita/datasets/JAAD/ \
+    --jaad-subset ${jaadsubset} \
+    --jaad-testing-set ${evalsplit} \
+    --checkpoint ${evalfrom} \
+    --batch-size 6 \
+    --jaad-head-upsample 2 \
+    --jaad-pedestrian-attributes ${attributes} \
+    --head-consolidation=keep \
+    --force-complete-pose --seed-threshold=0.2 \
     --decoder-use-pifpaf-bbox \
     --jaad-invert 120 \
     --jaad-truncate \
     --jaad-metrics "hazik_classification" \
-    2>&1 | tee ${xpdir}/logs/eval_t_4_no_seed_${evalepoch}_log.txt
+    2>&1 | tee ${xpdir}/logs/eval_t_4_${evalepoch}_log.txt
   echo "Evaluation done!"
 done
-
-
 
 cd -
 
